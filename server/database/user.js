@@ -6,7 +6,7 @@ const { error, secrets } = require('../config');
 // function to get user by email
 var getUser = (email) => {
   return new Promise((resolve, reject) => {
-    pool.query('SELECT name, surname, email, hash, salt, saldo, validated FROM public."user" WHERE email=$1 LIMIT 1', [email], (error, result) => {
+    pool.query('SELECT name, surname, email, hash, salt, saldo, validated, role FROM public."user" WHERE email=$1 LIMIT 1', [email], (error, result) => {
       if (error) throw error;
       if (result.rowCount == 0) reject(1); // reject if no rows (meaning no user found with given email)
       resolve(result.rows[0]); // resolve only first result, because there will be only one (email is primary key)
@@ -45,12 +45,12 @@ var validatePassword = (req, res, next) => {
   getUser(req.body.email).then(result => {
     // create hash with saved salt for user, and entered password
     const hash = crypto.pbkdf2Sync(req.body.password, result.salt, 10000, 512, 'sha512').toString('hex');
-    if (result.hash != hash) return res.status(422).json({ error: error.validate_password }); // return error if hashes don't match
+    if (result.hash != hash) return res.status(401).json({ error: error.validate_password }); // return error if hashes don't match
     // if hashes match, save user to request, pass validation
     req.user = result;
     next();
   }).catch(e => {
-    e && res.status(422).json({ error: error.validate_password }); // if no results, return error
+    e && res.status(401).json({ error: error.validate_password }); // if no results, return error
   })
 }
 
@@ -58,6 +58,17 @@ var validatePassword = (req, res, next) => {
 var isUserValidated = (req, res, next) => {
   if(!req.user.validated) return res.status(422).json({ error: error.user_not_validated });
   next();
+}
+
+// function to check if user has admin privilages
+var isUserAdmin = (req, res, next) => {
+  if(req.user.role != 'admin') return res.status(403).json({ error: error.user_not_admin });
+  next();
+}
+
+// function to attach user data to request
+var attachUserData = (req, res, next) => {
+  getUser(req.body.email).then(user => {req.user = user; next();});
 }
 
 // function to sign jwt
@@ -95,4 +106,4 @@ var deposit = (req, res) => {
   })
 }
 
-module.exports = { getUser, createUser, validateUser, isUserValidated, validatePassword, signJWT, changePersonalData, deposit };
+module.exports = { getUser, createUser, validateUser, isUserValidated, validatePassword, attachUserData, signJWT, changePersonalData, deposit, isUserAdmin };

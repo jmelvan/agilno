@@ -18,7 +18,7 @@ const handleSignUp = (req, res) => {
     res.status(422).json({error: error.email_exists});
   }).catch((e) => {
     // cahtches reject error if no rows found in database (meaning that user with that email doesn't exist, so we can create new one)
-    e && user.createUser(req.body.email, req.body.password).then(() => res.status(200).send("success"));
+    e && user.createUser(req.body.email, req.body.password).then(() => res.sendStatus(201));
   });
 }
 

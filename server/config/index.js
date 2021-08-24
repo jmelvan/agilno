@@ -21,7 +21,7 @@ const fields = {
     "user/signup": ["email", "password"],
     "user/login": ["email", "password"],
     "user/deposit": ["email", "amount"],
-    "sport/add": ["email", "name", "type"],
+    "sport/add": ["email", "name", "type", "result"],
     "sport/remove": ["email", "name"],
     "teams/add": ["email", "name", "type"],
     "teams/remove": ["email", "name"],
@@ -33,13 +33,15 @@ const fields = {
     "competition/remove": ["email", "id"],
     "event/add": ["email", "host_id", "guest_id", "competition_id"],
     "event/remove": ["email", "id"],
+    "event/finish": ["email", "id"],
     "event/finish-all": ["email"]
   }
 }
 
 const long_queries = {
   events: {
-    get_query: 'SELECT host.name as host, host.img as host_img, guest.name as guest, guest.img as guest_img, start_time, competition.name as competition_name, competition.type as competition_type  FROM event LEFT JOIN competition ON competition_id=competition.id JOIN team as host ON host_id=host.id JOIN team as guest ON guest_id=guest.id WHERE end_time IS NULL'
+    get_query: 'SELECT host.name as host, host.img as host_img, guest.name as guest, guest.img as guest_img, start_time, competition.name as competition_name, competition.type as competition_type  FROM event LEFT JOIN competition ON competition_id=competition.id JOIN team as host ON host_id=host.id JOIN team as guest ON guest_id=guest.id WHERE end_time IS NULL',
+    finish_all: 'SELECT event.id, sport.result as result FROM event JOIN competition ON competition_id=competition.id JOIN sport ON competition.sport_name=sport.name WHERE end_time IS NULL'
   }
 }
 

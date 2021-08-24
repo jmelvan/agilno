@@ -51,14 +51,40 @@ var remove = (req, res) => {
   })
 }
 
+// function to finish all unfinished events
 var finishAllEvents = (req, res) => {
-  var end_time = new Date(); // set current time as end time
-  
-  pool.query('UPDATE event SET end_time=$1 WHERE end_time IS NULL', [end_time.getTime()], (error, result) => {
+  // query that returns event id and array of possible results
+  pool.query(long_queries.events.finish_all, (error, result) => {
     if (error) throw error;
+    // loop through list of unfinished events
+    for(let event of result.rows)
+      finishEvent(event); // finish every event
+
     res.sendStatus(200);
   })
 }
 
+// middleware function to finish one event (not same as function "finishEvent")
+var finishOneEvent = (req, res) => {
+  var query = long_queries.events.finish_all + ' AND event.id=$1'; // Add id condition on finish all query string
 
-module.exports = { get, getBySport, checkUnique, add, remove, finishAllEvents };
+  pool.query(query, [req.body.query.id], (err, result) => {
+    if (err) throw err;
+    if (result.rowCount) finishEvent(result.rows[0]); 
+    res.sendStatus(200);
+  })
+}
+
+// function to finish one event at time
+var finishEvent = (event) => {
+  var end_time = new Date(); // set current timestamp as event end time
+  // result is random value from possible event results (1,2,x or 1,2 ...)
+  var result = event.result[Math.floor(Math.random()*event.result.length)];
+
+  pool.query('UPDATE event SET win=$1, end_time=$2 WHERE id=$3', [result, end_time.getTime(), event.id], (error, result) => {
+    if (error) throw error;
+  })
+}
+
+
+module.exports = { get, getBySport, checkUnique, add, remove, finishOneEvent, finishAllEvents };

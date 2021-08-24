@@ -30,6 +30,18 @@ var createUser = (email, password) => {
   }) 
 }
 
+// function to handle sign up request (check if user exist, if not, create use)
+const handleSignUp = (req, res) => {
+  //request database to see if email exists
+  getUser(req.body.query.email).then(result => {
+    // if user with given email is found, return error to client that email is already in use
+    res.status(422).json({error: error.email_exists});
+  }).catch((e) => {
+    // cahtches reject error if no rows found in database (meaning that user with that email doesn't exist, so we can create new one)
+    e && createUser(req.body.query.email, req.body.query.password).then(() => res.sendStatus(201));
+  });
+}
+
 // function to validate new user
 var validateUser = (req, res, next) => {
   // update field validate to true if user with specific hash exists
@@ -42,9 +54,9 @@ var validateUser = (req, res, next) => {
 // function to validate login password and user
 var validatePassword = (req, res, next) => {
   // get user by email
-  getUser(req.body.email).then(result => {
+  getUser(req.body.query.email).then(result => {
     // create hash with saved salt for user, and entered password
-    const hash = crypto.pbkdf2Sync(req.body.password, result.salt, 10000, 512, 'sha512').toString('hex');
+    const hash = crypto.pbkdf2Sync(req.body.query.password, result.salt, 10000, 512, 'sha512').toString('hex');
     if (result.hash != hash) return res.status(401).json({ error: error.validate_password }); // return error if hashes don't match
     // if hashes match, save user to request, pass validation
     req.user = result;
@@ -53,6 +65,9 @@ var validatePassword = (req, res, next) => {
     e && res.status(401).json({ error: error.validate_password }); // if no results, return error
   })
 }
+
+// function to handle login request (return jwt token)
+const handleLogin = (req, res) => res.json({ token: signJWT(req.user) });
 
 // function to check if user is validated
 var isUserValidated = (req, res, next) => {
@@ -68,7 +83,7 @@ var isUserAdmin = (req, res, next) => {
 
 // function to attach user data to request
 var attachUserData = (req, res, next) => {
-  getUser(req.body.email).then(user => {req.user = user; next();});
+  getUser(req.body.query.email).then(user => {req.user = user; next();});
 }
 
 // function to sign jwt
@@ -85,9 +100,9 @@ var signJWT = (user) => {
 
 // function to change users name and surname
 var changePersonalData = (req, res) => {
-  const { body: { user } } = req;
+  const { body: { query } } = req;
 
-  pool.query('UPDATE public."user" SET name=$1, surname=$2 WHERE email=$3', [user.newName || user.name, user.newSurname || user.surname, user.email], (error) => {
+  pool.query('UPDATE public."user" SET name=$1, surname=$2 WHERE email=$3', [query.newName || query.name, query.newSurname || query.surname, query.email], (error) => {
     if (error) return res.sendStatus(422);
     res.sendStatus(200);
   })
@@ -96,14 +111,25 @@ var changePersonalData = (req, res) => {
 // function to deposit money
 var deposit = (req, res) => {
   // get current user saldo (get from database because if we get it from request we don't want someone to intercept request and send not valid current saldo)
-  getUser(req.body.email).then(response => {
+  getUser(req.body.query.email).then(response => {
     var new_saldo = response.saldo + req.body.amount; // add new amount to current saldo
     // update new saldo in db
-    pool.query('UPDATE public."user" SET saldo=$1 WHERE email=$2', [new_saldo, req.body.email], (error) => {
+    pool.query('UPDATE public."user" SET saldo=$1 WHERE email=$2', [new_saldo, req.body.query.email], (error) => {
       if (error) return res.sendStatus(422);
       res.sendStatus(200);
     })
   })
 }
 
-module.exports = { getUser, createUser, validateUser, isUserValidated, validatePassword, attachUserData, signJWT, changePersonalData, deposit, isUserAdmin };
+module.exports = { 
+  getUser,
+  handleSignUp, 
+  validateUser, 
+  isUserValidated, 
+  validatePassword, 
+  handleLogin, 
+  attachUserData,
+  changePersonalData, 
+  deposit, 
+  isUserAdmin 
+};

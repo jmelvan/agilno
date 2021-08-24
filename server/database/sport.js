@@ -11,7 +11,9 @@ var get = (req, res) => {
 
 // function to check if sport with the same name exists
 var checkUnique = (req, res, next) => {
-  pool.query('SELECT * FROM sport WHERE name=$1', [req.body.name], (err, result) => {
+  const { body: { query: { name } } } = req;
+
+  pool.query('SELECT * FROM sport WHERE name=$1', [name], (err, result) => {
     if (err) throw err;
     if (result.rowCount) return res.status(422).json({ error: error.sport_exists }); // if rowCount > 0, sport exists and return error for creation
     next();
@@ -20,7 +22,9 @@ var checkUnique = (req, res, next) => {
 
 // function to add new sport
 var add = (req, res) => {
-  pool.query('INSERT INTO sport(name, type) VALUES ($1, $2)', [req.body.name, req.body.type], (error, result) => {
+  const { body: { query: { name, type } } } = req;
+
+  pool.query('INSERT INTO sport(name, type) VALUES ($1, $2)', [name, type], (error, result) => {
     if (error) throw error;
     res.sendStatus(201);
   })
@@ -28,10 +32,12 @@ var add = (req, res) => {
 
 // function to delete existing sport
 var remove = (req, res) => {
-  pool.query('DELETE FROM sport WHERE name=$1', [req.body.name], (error, result) => {
+  const { body: { query: { name } } } = req;
+
+  pool.query('DELETE FROM sport WHERE name=$1', [name], (error, result) => {
     if (error) throw error;
     res.sendStatus(200);
   })
 }
 
-module.exports = { add, remove, get, checkUnique }
+module.exports = { add, checkUnique, remove, get }

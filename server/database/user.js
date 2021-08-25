@@ -2,6 +2,7 @@ const { pool } = require('./connect');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const { error, secrets } = require('../config');
+const betslip = require('./betslip');
 
 // function to get user by email
 var getUser = (email) => {
@@ -110,14 +111,33 @@ var changePersonalData = (req, res) => {
 
 // function to deposit money
 var deposit = (req, res) => {
+  const { body: { query: { email, amount } } } = req;
+
   // get current user saldo (get from database because if we get it from request we don't want someone to intercept request and send not valid current saldo)
-  getUser(req.body.query.email).then(response => {
-    var new_saldo = response.saldo + req.body.amount; // add new amount to current saldo
+  getUser(email).then(response => {
+    var new_saldo = response.saldo + amount; // add new amount to current saldo
     // update new saldo in db
-    pool.query('UPDATE public."user" SET saldo=$1 WHERE email=$2', [new_saldo, req.body.query.email], (error) => {
+    pool.query('UPDATE public."user" SET saldo=$1 WHERE email=$2', [new_saldo, email], (error) => {
       if (error) return res.sendStatus(422);
       res.sendStatus(200);
     })
+  })
+}
+
+// function to place bet (function proccess the request and redirect to another function based on bet type)
+var placeBet = (req, res) => {
+  const { body: { query: { email, type, quotas, stake } } } = req;
+  var promises = []; // variable to store promises for each bet
+
+  // first, create betslip where single bets would be stored
+  betslip.createBetslip(email, stake || null, type).then(betslip_id => {
+    // loop through quotas and create bet for each quota
+    for(let quota of quotas)
+      promises.push(
+        betslip.createBetslipBet(betslip_id, quota).catch(() => res.status(422).json({ error: error.invalid_bet })) // if error on placing bet, reject whole operation
+      );
+    // after all bets are created (fulfill promises), return success
+    Promise.all(promises).then(() => res.sendStatus(201));
   })
 }
 
@@ -131,5 +151,6 @@ module.exports = {
   attachUserData,
   changePersonalData, 
   deposit, 
-  isUserAdmin 
+  isUserAdmin,
+  placeBet 
 };

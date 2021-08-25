@@ -3,6 +3,7 @@ const auth = require('../../config/auth');
 const user = require('../../database/user');
 const event = require('../../database/event');
 const quota = require('../../database/quota');
+const betslip = require('../../database/betslip');
 const helpers = require('../../helpers');
 
 // array of middlewares for verifying admin
@@ -25,7 +26,7 @@ router.post('/remove', ...validate_request, event.remove);
 router.post('/finish', ...validate_request, event.finishOneEvent);
 
 // route for finishing all unfinished events
-router.post('/finish-all', ...validate_request, event.finishAllEvents);
+router.post('/finish-all', ...validate_request, event.finishAllEvents, betslip.processBets);
 
 // route for getting all odds for all unfinished events
 router.get('/quotas', quota.get);

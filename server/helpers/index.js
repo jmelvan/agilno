@@ -18,4 +18,23 @@ const getActionFromURL = (url) => {
   return action.join('/');
 }
 
-module.exports = { checkRequiredFields }
+// middleware function to validate place bet request
+const validateBet = (req, res, next) => {
+  const { body: { query: { quotas, type, stake } } } = req;
+
+  // check for bet types (single/multiple)
+  if(type == 'single'){
+    // if bet type is single, every bet (quota) must have stake 
+    for(let quota of quotas)
+      if(!quota.stake) return res.status(422).json({ error: error.invalid_bet })
+
+  } else if(type == 'multiple') {
+    // if bet type is multiple, bet stake is for betslip and not for every quota
+    if(!stake) return res.status(422).json({ error: error.invalid_bet })
+
+  } else return res.status(422).json({ error: error.invalid_bet })
+
+  next();
+}
+
+module.exports = { checkRequiredFields, validateBet }

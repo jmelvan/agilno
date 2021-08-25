@@ -51,7 +51,7 @@ var remove = (req, res) => {
 }
 
 // function to finish all unfinished events
-var finishAllEvents = (req, res) => {
+var finishAllEvents = (req, res, next) => {
   // query that returns event id and array of possible results
   pool.query(long_queries.events.finish_all, (error, result) => {
     if (error) throw error;
@@ -59,7 +59,7 @@ var finishAllEvents = (req, res) => {
     for(let event of result.rows)
       finishEvent(event); // finish every event
 
-    res.sendStatus(200);
+    next();
   })
 }
 

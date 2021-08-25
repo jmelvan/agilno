@@ -1,4 +1,3 @@
-
 const { pool } = require('./connect');
 const { error, long_queries } = require('../config');
 
@@ -26,12 +25,12 @@ var checkUnique = (req, res, next) => {
 
   pool.query('SELECT * FROM event WHERE host_id=$1 AND guest_id=$2 AND start_time=$3', [host_id, guest_id, start_time], (err, result) => {
     if (err) console.log(err);
-    if (result.rowCount) return res.status(422).json({ error: error.competition_exists }); // if rowCount > 0, event exists and return error for creation
+    if (result.rowCount) return res.status(422).json({ error: error.event_exists }); // if rowCount > 0, event exists and return error for creation
     next();
   })
 }
 
-// function to add new player
+// function to add new event
 var add = (req, res) => {
   const { body: { query: { host_id, guest_id, start_time, competition_id } } } = req;
 
@@ -41,7 +40,7 @@ var add = (req, res) => {
   })
 }
 
-// function to delete existing player
+// function to delete existing event
 var remove = (req, res) => {
   const { body: { query: { id } } } = req;
 

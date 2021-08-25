@@ -1,8 +1,7 @@
-
 const { pool } = require('./connect');
 const { error } = require('../config');
 
-// function to get all players
+// function to get all competitions
 var get = (req, res) => {
   pool.query('SELECT * FROM competition', (error, result) => {
     if (error) throw error;
@@ -10,7 +9,7 @@ var get = (req, res) => {
   })
 }
 
-// function to get all players
+// function to get all competitions
 var getBySport = (req, res) => {
   // query string builder based on extra url query param 'type' that can be (national, club, individual)
   var query_str = !req.query.type ? 'SELECT * FROM competition WHERE sport_name=$1' : "SELECT * FROM competition WHERE sport_name=$1 AND type='"+req.query.type+"'";
@@ -21,7 +20,7 @@ var getBySport = (req, res) => {
   })
 }
 
-// function to check if player with the same data exists (same name and surname are allowed, but only if cuntry or sport_name is different)
+// function to check if competition with the same name and in the same sport already exists
 var checkUnique = (req, res, next) => {
   const { body: { query: { name, sport_name } } } = req;
 
@@ -32,7 +31,7 @@ var checkUnique = (req, res, next) => {
   })
 }
 
-// function to add new player
+// function to add new competition
 var add = (req, res) => {
   const { body: { query: { name, type, sport_name } } } = req;
 
@@ -42,7 +41,7 @@ var add = (req, res) => {
   })
 }
 
-// function to delete existing player
+// function to delete existing competition
 var remove = (req, res) => {
   const { body: { query: { id } } } = req;
 

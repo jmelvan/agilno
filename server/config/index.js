@@ -9,6 +9,8 @@ const error = {
   team_exists: "That team already exists.",
   player_exists: "Player with the same name, surname and country playing that sport already exists.",
   competition_exists: "Competition with the same name and in same sport already exists.",
+  event_exists: "Event with the same host and guest at the same time already exists",
+  quota_exists: "Quota with the same type for the same event already exists",
   action_not_specified: "Something's wrong with your request. Please try again."
 }
 
@@ -34,7 +36,9 @@ const fields = {
     "event/add": ["email", "host_id", "guest_id", "competition_id"],
     "event/remove": ["email", "id"],
     "event/finish": ["email", "id"],
-    "event/finish-all": ["email"]
+    "event/finish-all": ["email"],
+    "quotas/add": ["email", "type", "value"],
+    "quotas/remove": ["email", "id"]
   }
 }
 

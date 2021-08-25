@@ -1,4 +1,3 @@
-
 const { pool } = require('./connect');
 const { error } = require('../config');
 

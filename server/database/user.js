@@ -68,7 +68,11 @@ var validatePassword = (req, res, next) => {
 }
 
 // function to handle login request (return jwt token)
-const handleLogin = (req, res) => res.json({ token: signJWT(req.user) });
+const handleLogin = (req, res) => {
+  const { user: { email, name, surname, saldo, role } } = req
+  // user object is filtered because we don't want to send hash and salt to client
+  res.json({ token: signJWT(req.user), email: email, name: name, surname: surname, saldo: saldo, role: role })
+};
 
 // function to check if user is validated
 var isUserValidated = (req, res, next) => {

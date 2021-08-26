@@ -1,0 +1,31 @@
+@import './colors';
+
+html, body{
+  width: -webkit-fill-available;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden;
+  font-family: 'Inter';
+  background-color: $primary-bg;
+}
+
+.container{
+  padding-left: 135px;
+  padding-right: 135px;
+}
+
+.maxw{
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hover--opacity{
+  transition: opacity .35s ease;
+
+  @media (hover: hover){
+    &:hover{
+      opacity: .6;
+    }
+  }
+}

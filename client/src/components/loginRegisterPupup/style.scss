@@ -1,0 +1,119 @@
+@import '../../scss/colors';
+
+.popup-wrapper{
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  opacity: 0;
+  background-color: rgba(0,0,0,.3);
+  transition: opacity .35s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-wrapper.opened{
+  z-index: 999;
+  opacity: 1;
+
+  & .form{
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.popup-wrapper.closing{
+  opacity: 0;
+}
+
+.close-popup{
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.form{
+  width: 350px;
+  padding: 30px;
+  background-color: $secondary-bg;
+  opacity: 0;
+  border-radius: 5px;
+  transform: translateY(100px);
+  transition: all .35s ease;
+  transition-delay: .15s;
+}
+
+.popup__h2{
+  margin: 0;
+  color: $primary-text-color;
+  letter-spacing: .02em;
+  font-weight: 600;
+  font-size: 30px;
+  margin-bottom: 15px;
+}
+
+.popup__input{
+  width: -webkit-fill-available;
+  height: 60px;
+  background-color: $primary-bg;
+  font-family: 'Inter';
+  font-size: 16px;
+  font-weight: 400;
+  padding: 0 20px;
+  margin: 0;
+  margin-top: 15px;
+  color: $primary-text-color;
+  border: none;
+  outline: none;
+}
+
+.popup__cta{
+  width: -webkit-fill-available;
+  height: 50px;
+  margin-top: 30px;
+  margin-bottom: 5px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  background-color: $green;
+  color: $primary-bg;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.popup__p{
+  font-size: 13px;
+  color: $primary-text-color;
+  margin: 0;
+  margin-top: 15px;
+
+  & > span{
+    color: $green;
+    cursor: pointer;
+
+    @media (hover: hover){
+      &:hover{
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.popup__error{
+  width: -webkit-fill-available;
+  padding: 10px 20px;
+  background-color: rgba(222, 66, 45, 0.3);
+  border: 1px solid rgba(222, 66, 45, 0.8);
+  border-radius: 5px;
+  font-size: 13px;
+  color: $primary-text-color;
+  letter-spacing: .01em;
+}

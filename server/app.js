@@ -1,11 +1,12 @@
 const express = require('express');
-const session = require('express-session');
+var cors = require('cors')
 
 const app = express();
 
 // Configure app
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 app.use(require('./routes'));
 
 // start server

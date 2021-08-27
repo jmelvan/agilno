@@ -53,23 +53,17 @@ async function updateUserInStore(params, { rejectWithValue }) {
 }
 
 // function to edit name and surname
-async function editProfile(params) {
-  try {
-    return await helpers.buildRequest(params, '/user/edit-profile', true);
-  } catch (err) {
-    return err;
-  }
+function editProfile(params) {
+  return new Promise((resolve, reject) => {
+    helpers.buildRequest(params, '/user/edit-profile', true).then(res => resolve(res)).catch(err => reject(err));
+  })
 }
 
 // function for deposit
-async function deposit(params) {
-  try {
-    var response = await helpers.buildRequest(params, '/user/deposit', true);
-    response.amount = params.amount;
-    return response;
-  } catch (err) {
-    return err;
-  }
+function deposit(params) {
+  return new Promise((resolve, reject) => {
+    helpers.buildRequest(params, '/user/deposit', true).then(res => resolve(res)).catch(err => reject(err));
+  })
 }
 
 // function to check if user is logged in after refresh

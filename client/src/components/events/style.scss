@@ -1,0 +1,29 @@
+@import '../../scss/colors';
+
+.events-group__header{
+  height: 30px;
+  border-bottom: 1px solid $primary-bg;
+  padding: 0 20px;
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: .02em;
+  line-height: 1;
+  color: $secondary-text-color;
+  text-transform: capitalize;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.results__title{
+  flex: 1;
+}
+
+.results__name{
+  width: 90px;
+  text-align: center;
+
+  &:not(:last-of-type){
+    margin-right: 10px;
+  }
+}

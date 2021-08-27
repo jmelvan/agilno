@@ -1,0 +1,68 @@
+@import '../../scss/colors';
+
+.event{
+  height: 45px;
+  border-bottom: 1px solid $primary-bg;
+  padding: 15px 20px;
+  display: flex;
+  flex-direction: row;
+}
+
+.event__info{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.event__info__h5{
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: .02em;
+  line-height: 22px;
+  color: $primary-text-color;
+  margin: 0;
+}
+
+.event_info__h6{
+  @extend .event__info__h5;
+  color: $secondary-text-color !important;
+}
+
+.event__quotas{
+  display: flex;
+  flex-direction: row;
+}
+
+.event__quota{
+  height: 45px;
+  width: 90px;
+  background-color: $primary-bg;
+  border-radius: 5px;
+  cursor: pointer;
+  box-sizing: border-box;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  &:not(:last-of-type){
+    margin-right: 10px;
+  }
+}
+
+.event__quota__type{
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 16px;
+  color: $secondary-text-color;
+}
+
+.event__quota__value{
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 13px;
+  letter-spacing: .02em;
+  color: $primary-text-color;
+}

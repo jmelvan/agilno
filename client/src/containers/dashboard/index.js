@@ -3,6 +3,7 @@ import Header from '../../components/header';
 import LoginRegisterPopup from '../../components/loginRegisterPopup';
 import Profile from '../../components/profile';
 import Deposit from '../../components/deposit';
+import Sports from '../../components/sports';
 import { checkUserLogin } from '../../features/user/userSlice';
 import { connect } from 'react-redux';
 import './style.scss';
@@ -18,6 +19,12 @@ class Dashboard extends React.Component {
     return(
       <React.Fragment>
         <Header />
+        <section className="content-holder container">
+          <div className="grid">
+            <Sports />
+
+          </div>
+        </section>
         <LoginRegisterPopup />
         <Profile />
         <Deposit />

@@ -57,7 +57,7 @@ const fields = {
 
 const long_queries = {
   events: {
-    get_query: 'SELECT event.id as event_id, host.name as host, host.img as host_img, guest.name as guest, guest.img as guest_img, start_time, competition.name as competition_name, competition.type as competition_type FROM event LEFT JOIN competition ON competition_id=competition.id JOIN team as host ON host_id=host.id JOIN team as guest ON guest_id=guest.id WHERE end_time IS NULL',
+    get_query: 'SELECT event.id as event_id, host.name as host, host.img as host_img, guest.name as guest, guest.img as guest_img, start_time, competition.name as competition_name, competition.type as competition_type, sport.name as sport_name, sport.result as quota_types FROM event LEFT JOIN competition ON competition_id=competition.id JOIN team as host ON host_id=host.id JOIN team as guest ON guest_id=guest.id JOIN sport ON competition.sport_name=sport.name WHERE end_time IS NULL',
     finish_all: 'SELECT event.id, sport.result as result FROM event JOIN competition ON competition_id=competition.id JOIN sport ON competition.sport_name=sport.name WHERE end_time IS NULL'
   },
   betslip: {

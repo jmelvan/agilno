@@ -27,6 +27,112 @@ const authHeader = () => {
     return {};
 }
 
+// function to turn events into valid object for this app
+const getSports = () => {
+  return new Promise((resolve, reject) => {
+    // get all unfinished events from server
+    axios.get(config.api + '/event').then(res => {
+      // get all quotas so we can push them to events
+      axios.get(config.api + '/event/quotas').then(odds => {
+        // extract events
+        var events = assignOdds(res.data, odds.data);
+        // create valid object from all events
+        var sports = extractSports(events);
+        // resolve sports
+        resolve(sports);
+      });
+    }).catch(err => reject(err));
+  })
+}
+
+// function to assing odds to single event
+const assignOdds = (events, odds) => {
+  // loop through all odds and all events
+  for(let odd of odds)
+    for(let event of events)
+      if(event.event_id == odd.event_id) { // if event id's match, assing odd
+        !event.odds && (event.odds = {}); // if odd array doesn't already exist
+        event.odds[odd.type] = odd; // push odd
+      }
+  // return object at the end
+  return events;
+}
+
+// function that extracts sports from unfinished events (so we don't show existing sports without events)
+const extractSports = (events) => {
+  var unique = [], sports = {};
+  // loop through every event
+  for(let event of events)
+    unique.indexOf(event.sport_name) == -1 && unique.push({ sport: event.sport_name, results: event.quota_types }); // check if sport is in array
+  // loop through unique sports
+  unique.map(obj => {
+    sports[obj.sport] = {};
+    // every sport has same result possibilities, we need to save them for latter
+    sports[obj.sport].results = obj.results;
+    // extract competitions foreach unique sport
+    sports[obj.sport].competitions = extractCompetitions(events, obj.sport);
+  })
+
+  // return object of sports
+  return sports;
+}
+
+// function to extract competitions for single sport from unfinished events
+const extractCompetitions = (events, sport_name) => {
+  var unique = [], competitions = {};
+  // loop through events
+  for(let event of events)
+    if(event.sport_name == sport_name) // if has the same sport name as one in argument and competition name is unique, push name to competititons
+      unique.indexOf(event.competition_name) == -1 && unique.push(event.competition_name);
+  // extract events dates foreach competition
+  unique.map(competition => {
+    competitions[competition] = {};
+    competitions[competition].dates = extractDates(events, competition);
+  })
+  // return competitions object for sport
+  return competitions
+}
+
+// function to extract dates for single competition from unfinished events
+const extractDates = (events, competition_name) => {
+  var unique = [], dates = {};
+  // loop through events
+  for(let event of events)
+    if(event.competition_name == competition_name){ // extract unique dates for every competition
+      var date = formatDate(new Date(parseInt(event.start_time)));
+      unique.indexOf(date) == -1 && unique.push(date);
+    }
+  // extract events foreach date
+  unique.map(date => {
+    dates[unique] = {};
+    dates[unique].events = extractEvents(events, date);
+  })
+  // return dates object for competition
+  return dates;
+}
+
+// function to extract events for single date in competition from unfinished events
+const extractEvents = (events, date) => {
+  var events_list = [];
+  // loop through events
+  for(let event of events){
+    var event_date = formatDate(new Date(parseInt(event.start_time)));
+    // if date matches, push event to event list for that day
+    if(event_date = date) events_list.push(event);
+  }
+  // return events list for specified date
+  return events_list;
+}
+
+// function to format date, return format: dd.mm.YYYY
+const formatDate = (d) => {
+  let y = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
+  let m = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(d);
+  let dd = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
+  return dd + '.' + m + '.' + y;
+}
+
+// function that formats user balance
 const balanceFormatter = (balance) => {
   var formatter = new Intl.NumberFormat('hr-HR', {
     style: 'currency',
@@ -50,6 +156,7 @@ const updateLocalStorage = (key, values) => {
   })
 }
 
+// function with promise to load item from storage
 const loadFromStorage = (key) => {
   return new Promise((resolve, reject) => {
     var item = localStorage.getItem(key);
@@ -57,6 +164,7 @@ const loadFromStorage = (key) => {
   })
 }
 
+// function that returns popup element and success or error msg
 const popupMsg = (type, msg) => {
   return <div className={"popup__" + type}>{msg}</div>
 }
@@ -64,6 +172,7 @@ const popupMsg = (type, msg) => {
 const helpers = {
   buildRequest,
   balanceFormatter,
+  getSports,
   updateLocalStorage,
   loadFromStorage,
   authHeader,

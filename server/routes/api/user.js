@@ -13,6 +13,9 @@ router.get('/validate/:hash', user.validateUser);
 // login route
 router.post('/login', helpers.checkRequiredFields, user.validatePassword, user.isUserValidated, user.handleLogin);
 
+// get current user data
+router.post('/current', auth.required, user.attachUserData, user.handleLogin);
+
 // change personal data
 router.post('/edit-profile', auth.required, user.changePersonalData);
 

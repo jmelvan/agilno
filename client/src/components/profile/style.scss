@@ -1,0 +1,39 @@
+@import '../../scss/colors';
+
+.profile{
+  width: 500px;
+  padding: 30px;
+  background-color: $secondary-bg;
+  opacity: 0;
+  border-radius: 5px;
+  transform: translateY(100px);
+  transition: all .35s ease;
+  transition-delay: .15s;
+  position: relative;
+}
+
+.popup-wrapper.opened{
+  & .profile{
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.profile .grid{
+  column-gap: 20px;
+}
+
+.profile .popup__input{
+  grid-column: span 6;
+}
+
+.profile__save-changes{
+  grid-column: span 12;
+  margin: 0 !important;
+  transition: opacity .35s ease;
+}
+
+.profile__save-changes.disabled{
+  opacity: .3 !important;
+  pointer-events: none;
+}

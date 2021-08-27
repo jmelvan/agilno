@@ -1,7 +1,7 @@
 const { pool } = require('./connect');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const { error, secrets } = require('../config');
+const { error, secrets, successMsg } = require('../config');
 const betslip = require('./betslip');
 
 // function to get user by email
@@ -39,7 +39,7 @@ const handleSignUp = (req, res) => {
     res.status(422).json({error: error.email_exists});
   }).catch((e) => {
     // cahtches reject error if no rows found in database (meaning that user with that email doesn't exist, so we can create new one)
-    e && createUser(req.body.query.email, req.body.query.password).then(() => res.sendStatus(201));
+    e && createUser(req.body.query.email, req.body.query.password).then(() => res.status(201).json({ msg: successMsg.register }));
   });
 }
 
@@ -88,7 +88,7 @@ var isUserAdmin = (req, res, next) => {
 
 // function to attach user data to request
 var attachUserData = (req, res, next) => {
-  getUser(req.body.query.email).then(user => {req.user = user; next();});
+  getUser(req.payload.email).then(user => {req.user = user; next();});
 }
 
 // function to sign jwt
@@ -105,32 +105,35 @@ var signJWT = (user) => {
 
 // function to change users name and surname
 var changePersonalData = (req, res) => {
-  const { body: { query } } = req;
+  const { body: { query }, payload: { email } } = req;
 
-  pool.query('UPDATE public."user" SET name=$1, surname=$2 WHERE email=$3', [query.newName || query.name, query.newSurname || query.surname, query.email], (error) => {
+  pool.query('UPDATE public."user" SET name=$1, surname=$2 WHERE email=$3', [query.newName || query.name, query.newSurname || query.surname, email], (error) => {
     if (error) return res.sendStatus(422);
-    res.sendStatus(200);
+    res.status(200).json({ msg: successMsg.editProfile });
   })
 }
 
 // function to deposit money
 var deposit = (req, res) => {
-  const { body: { query: { email, amount } } } = req;
+  const { body: { query: { card_number, card_expire, card_cvv, amount } }, payload: { email } } = req;
+  // check if credit card is valid (for simulation only this card works)
+  if(card_number != '5524508617228117' && card_expire != '05/26' && card_cvv != '280') return res.status(422).json({ error: error.credit_card });
 
   // get current user saldo (get from database because if we get it from request we don't want someone to intercept request and send not valid current saldo)
   getUser(email).then(response => {
-    var new_saldo = response.saldo + amount; // add new amount to current saldo
+    var new_saldo = parseFloat(response.saldo) + parseFloat(amount); // add new amount to current saldo
+
     // update new saldo in db
     pool.query('UPDATE public."user" SET saldo=$1 WHERE email=$2', [new_saldo, email], (error) => {
       if (error) return res.sendStatus(422);
-      res.sendStatus(200);
+      res.status(200).json({ msg: successMsg.deposit });
     })
   })
 }
 
 // function to place bet (function proccess the request and redirect to another function based on bet type)
 var placeBet = (req, res) => {
-  const { body: { query: { email, type, quotas, stake } } } = req;
+  const { body: { query: { type, quotas, stake } }, payload: { email } } = req;
   var promises = []; // variable to store promises for each bet
 
   // first, create betslip where single bets would be stored

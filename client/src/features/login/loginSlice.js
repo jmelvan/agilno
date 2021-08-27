@@ -3,7 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   openPopup: false,
   isRegistered: true,
-  errorMsg: undefined
+  errorMsg: undefined,
+  successMsg: undefined
 };
 
 export const loginSlice = createSlice({
@@ -23,10 +24,16 @@ export const loginSlice = createSlice({
     },
     loginError: (state, { payload: { error } }) => {
       state.errorMsg = error;
+      state.successMsg = undefined;
+    },
+    registerSuccess: (state, { payload: { msg } }) => {
+      state.successMsg = msg;
+      state.errorMsg = undefined;
+      state.isRegistered = !state.isRegistered;
     }
   }
 })
 
-export const { openPopup, closePopup, toggleRegister, loginError } = loginSlice.actions;
+export const { openPopup, closePopup, toggleRegister, loginError, registerSuccess } = loginSlice.actions;
 
 export default loginSlice.reducer;

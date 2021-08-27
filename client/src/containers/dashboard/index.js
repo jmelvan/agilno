@@ -1,8 +1,11 @@
 import React from 'react';
 import Header from '../../components/header';
-import LoginRegisterPupup from '../../components/loginRegisterPupup';
+import LoginRegisterPopup from '../../components/loginRegisterPopup';
+import Profile from '../../components/profile';
+import Deposit from '../../components/deposit';
 import { checkUserLogin } from '../../features/user/userSlice';
 import { connect } from 'react-redux';
+import './style.scss';
 
 class Dashboard extends React.Component {
 
@@ -15,7 +18,9 @@ class Dashboard extends React.Component {
     return(
       <React.Fragment>
         <Header />
-        <LoginRegisterPupup />
+        <LoginRegisterPopup />
+        <Profile />
+        <Deposit />
       </React.Fragment>
     )
   }

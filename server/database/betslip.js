@@ -114,7 +114,7 @@ const isCashoutAvailable = (req, res, next) => {
 
 // function for cashout
 const cashout = (req, res) => {
-  const { body: { query: { email, betslip_id } } } = req;
+  const { body: { query: { betslip_id } }, payload: { email } } = req;
   // select query based on betslip type
   var query = req.betslip.type == 'multiple' ? long_queries.betslip.get_cashout_multiple : long_queries.betslip.get_cashout_single;
 

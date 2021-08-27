@@ -1,4 +1,4 @@
-@import '../../scss/colors';
+@import '../colors';
 
 .popup-wrapper{
   width: 100%;
@@ -18,11 +18,6 @@
 .popup-wrapper.opened{
   z-index: 999;
   opacity: 1;
-
-  & .form{
-    transform: translateY(0);
-    opacity: 1;
-  }
 }
 
 .popup-wrapper.closing{
@@ -37,16 +32,6 @@
   bottom: 0;
 }
 
-.form{
-  width: 350px;
-  padding: 30px;
-  background-color: $secondary-bg;
-  opacity: 0;
-  border-radius: 5px;
-  transform: translateY(100px);
-  transition: all .35s ease;
-  transition-delay: .15s;
-}
 
 .popup__h2{
   margin: 0;
@@ -110,10 +95,58 @@
 .popup__error{
   width: -webkit-fill-available;
   padding: 10px 20px;
-  background-color: rgba(222, 66, 45, 0.3);
-  border: 1px solid rgba(222, 66, 45, 0.8);
+  background-color: rgba(222, 66, 45, .3);
+  border: 1px solid rgba(222, 66, 45, .8);
   border-radius: 5px;
   font-size: 13px;
   color: $primary-text-color;
   letter-spacing: .01em;
+}
+
+.popup__success{
+  @extend .popup__error;
+  background-color: rgba(12, 214, 100, .3);
+  border: 1px solid rgba(12, 214, 100, .8);
+}
+
+.close-icon{
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: $primary-bg;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  right: 30px;
+  top: 32px;
+  cursor: pointer;
+}
+
+.close-icon > div{
+  transform: rotate(45deg);
+  width: 14px;
+  height: 14px;
+  position: relative;
+
+  &::after{
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: $primary-text-color;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 1px;
+  }
+  &::before{
+    content: '';
+    position: absolute;
+    height: 100%;
+    width: 2px;
+    background-color: $primary-text-color;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 1px;
+  }
 }

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { connect } from 'react-redux';
 import helpers from '../../helpers';
 import { logout } from '../../features/user/userAPI';
+import { toggleProfile, toggleDeposit } from '../../features/user/userSlice';
 import { ReactComponent as ProfileImg } from '../../resources/icons/profile.svg';
 import { ReactComponent as MyBets } from '../../resources/icons/my-bets.svg';
 import { ReactComponent as MyProfile } from '../../resources/icons/my-profile.svg';
@@ -11,10 +12,14 @@ class UserAccount extends React.Component {
   constructor(props){
     super(props);
     
+    this.state = {
+      user_dropdown: false
+    }
   }
 
   render() {
-    const { balance, name, surname, email } = this.props;
+    const { balance, name, surname, email, toggleProfile, toggleDeposit } = this.props;
+    const { user_dropdown } = this.state;
     
     return(
       <React.Fragment>
@@ -22,13 +27,13 @@ class UserAccount extends React.Component {
           <h5 className="user__balance__h5">{ helpers.balanceFormatter(balance) }</h5>
           <h6 className="user__balance__h6">Balance</h6>
         </div>
-        <div className="user__deposit hover--opacity">
+        <div className="user__deposit hover--opacity" onClick={() => toggleDeposit()}>
           Deposit
         </div>
-        <div className="user__img">
+        <div className="user__img" onClick={() => this.setState({ user_dropdown: !user_dropdown })}>
           <ProfileImg />
         </div>
-        <div className="user__dropdown">
+        <div className={"user__dropdown" + (user_dropdown ? " opened" : "")}>
           <div className="user__dropdown__item user__dropdown__personal">
             <div className="user__dropdown__img-wrapper" ><ProfileImg /></div>
             <div className="user__personal__data">
@@ -40,7 +45,7 @@ class UserAccount extends React.Component {
             <Link to='/my-bets'>
               <div className="user__dropdown__nav-item"><div><MyBets /></div>My bets</div>
             </Link>
-            <div className="user__dropdown__nav-item"><div><MyProfile /></div>My profile</div>
+            <div className="user__dropdown__nav-item" onClick={() => toggleProfile()}><div><MyProfile /></div>My profile</div>
           </div>
           <div className="user__dropdown__item">
             <div className="user__dropdown__nav-item hover--opacity logout" onClick={() => logout()} >Log out</div>
@@ -64,7 +69,8 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    
+    toggleProfile: () => dispatch(toggleProfile()),
+    toggleDeposit: () => dispatch(toggleDeposit())
   }
 }
 

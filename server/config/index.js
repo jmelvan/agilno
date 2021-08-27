@@ -15,7 +15,14 @@ const error = {
   invalid_bet: "Something's wrong with your request. Please try again.",
   cashout_not_available: "Unfortunatelly, that betslip is not wining and not valid for cashout.",
   cashout_error: "Unfortunatelly, there has been problem with your cashout, please try again latter.",
-  already_cashedout: "You have already cashed out this betslip."
+  already_cashedout: "You have already cashed out this betslip.",
+  credit_card: "We couldn't proccess the payment. Please use valid credit card."
+}
+
+const successMsg = {
+  register: "Your account has been created. Please confirm you email address before login.",
+  editProfile: "You have successfully changed your personal info.",
+  deposit: "You have successfully transfered money to your account."
 }
 
 const secrets = {
@@ -26,31 +33,31 @@ const fields = {
   required: {
     "user/signup": ["email", "password"],
     "user/login": ["email", "password"],
-    "user/deposit": ["email", "amount"],
-    "user/place-bet": ["email", "quotas", "type"],
-    "user/cashout": ["email", "betslip_id"],
-    "sport/add": ["email", "name", "type", "result"],
-    "sport/remove": ["email", "name"],
-    "teams/add": ["email", "name", "type"],
-    "teams/remove": ["email", "name"],
-    "teams/asign-player": ["email", "id", "player_id"],
-    "player/add": ["email", "name", "surname", "sport_name", "country"],
-    "player/remove": ["email", "id"],
-    "player/asign-to-team": ["email", "id", "team_id"],
-    "competition/add": ["email", "name", "type", "sport_name"],
-    "competition/remove": ["email", "id"],
-    "event/add": ["email", "host_id", "guest_id", "competition_id", "start_time"],
-    "event/remove": ["email", "id"],
-    "event/finish": ["email", "id"],
-    "event/finish-all": ["email"],
-    "quotas/add": ["email", "type", "value"],
-    "quotas/remove": ["email", "id"]
+    "user/deposit": ["amount"],
+    "user/place-bet": ["quotas", "type"],
+    "user/cashout": ["betslip_id"],
+    "sport/add": ["name", "type", "result"],
+    "sport/remove": ["name"],
+    "teams/add": ["name", "type"],
+    "teams/remove": ["name"],
+    "teams/asign-player": ["id", "player_id"],
+    "player/add": ["name", "surname", "sport_name", "country"],
+    "player/remove": ["id"],
+    "player/asign-to-team": ["id", "team_id"],
+    "competition/add": ["name", "type", "sport_name"],
+    "competition/remove": ["id"],
+    "event/add": ["host_id", "guest_id", "competition_id", "start_time"],
+    "event/remove": ["id"],
+    "event/finish": ["id"],
+    "event/finish-all": [],
+    "quotas/add": ["type", "value"],
+    "quotas/remove": ["id"]
   }
 }
 
 const long_queries = {
   events: {
-    get_query: 'SELECT host.name as host, host.img as host_img, guest.name as guest, guest.img as guest_img, start_time, competition.name as competition_name, competition.type as competition_type  FROM event LEFT JOIN competition ON competition_id=competition.id JOIN team as host ON host_id=host.id JOIN team as guest ON guest_id=guest.id WHERE end_time IS NULL',
+    get_query: 'SELECT event.id as event_id, host.name as host, host.img as host_img, guest.name as guest, guest.img as guest_img, start_time, competition.name as competition_name, competition.type as competition_type FROM event LEFT JOIN competition ON competition_id=competition.id JOIN team as host ON host_id=host.id JOIN team as guest ON guest_id=guest.id WHERE end_time IS NULL',
     finish_all: 'SELECT event.id, sport.result as result FROM event JOIN competition ON competition_id=competition.id JOIN sport ON competition.sport_name=sport.name WHERE end_time IS NULL'
   },
   betslip: {
@@ -61,4 +68,4 @@ const long_queries = {
   }
 }
 
-module.exports = { error, secrets, fields, long_queries };
+module.exports = { error, secrets, fields, long_queries, successMsg };

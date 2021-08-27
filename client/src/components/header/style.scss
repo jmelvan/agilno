@@ -123,6 +123,10 @@ nav{
   width: 280px;
   border-radius: 10px;
   background-color: $secondary-bg;
+  opacity: 0;
+  z-index: -1;
+  pointer-events: none;
+  transition: opacity .35s ease;
 
   &::before{
     content: '';
@@ -132,6 +136,12 @@ nav{
     border-left: 15px solid transparent;
     border-right: 15px solid transparent;
     border-bottom: 15px solid $secondary-bg;
+  }
+
+  &.opened{
+    opacity: 1;
+    z-index: 2;
+    pointer-events: all;
   }
 }
 
@@ -188,7 +198,7 @@ nav{
   font-weight: 500;
   color: $primary-text-color;
   line-height: 1;
-  text-decoration: none;
+  text-decoration: none !important;
   display: flex;
   flex-direction: row;
   align-items: center;

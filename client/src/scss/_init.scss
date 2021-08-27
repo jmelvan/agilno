@@ -29,3 +29,14 @@ html, body{
     }
   }
 }
+
+.grid{
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: 30px;
+  row-gap: 30px;
+}
+
+a{
+  text-decoration: none !important;
+}

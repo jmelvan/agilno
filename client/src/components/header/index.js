@@ -6,10 +6,6 @@ import { openPopup } from '../../features/login/loginSlice';
 import './style.scss';
 
 class Header extends React.Component {
-  constructor(props){
-    super(props);
-    
-  }
 
   render() {
     const { openPopup, isLoggedIn } = this.props;

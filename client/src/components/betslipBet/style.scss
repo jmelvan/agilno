@@ -1,0 +1,115 @@
+@import '../../scss/colors';
+
+.betslip__bet{
+  width: -webkit-fill-available;
+  margin: 0 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid $primary-bg;
+}
+
+.bet__header{
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+}
+
+.betslip.multiple .bet__header{
+
+  &:last-of-type{
+    margin-bottom: 5px !important;
+  }
+}
+
+.bet__opponents{
+  flex: 1;
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: .01em;
+  color: $primary-text-color;
+}
+
+.bet__remove{
+  width: 14px;
+  height: 14px;
+  transform: rotate(45deg);
+  position: relative;
+  cursor: pointer;
+
+  &:before{
+    content: '';
+    width: 1.5px;
+    height: 100%;
+    background-color: $secondary-text-color;
+    border-radius: 1px;
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+  }
+  &:after{
+    content: '';
+    height: 1.5px;
+    width: 100%;
+    background-color: $secondary-text-color;
+    border-radius: 1px;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+  }
+}
+
+.bet__match-result{
+  flex: 1;
+}
+
+.bet__match-result__title{
+  font-weight: 300;
+  font-size: 11px;
+  letter-spacing: .01em;
+  color: $secondary-text-color;
+}
+
+.bet__match-result__value{
+  font-weight: 300;
+  font-size: 13px;
+  letter-spacing: .01em;
+  margin-top: 3px;
+  color: $primary-text-color;
+}
+
+.bet__odd-wrapper{
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+}
+
+.bet__odd{
+  padding: 3px 7px;
+  background-color: $green;
+  border-radius: 2px;
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: .01em;
+  color: $primary-text-color;
+}
+
+.bet__stake-win{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 10px;
+}
+
+.bet__input{
+  grid-column: span 1;
+  border-radius: 5px;
+  height: 35px;
+  background-color: $primary-bg;
+  border: none;
+  outline: none;
+  padding: 0 10px;
+  font-size: 12px;
+  letter-spacing: .01em;
+  color: $primary-text-color;
+  margin: 0;
+}

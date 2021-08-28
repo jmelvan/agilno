@@ -102,10 +102,12 @@ const extractDates = (events, competition_name) => {
       var date = formatDate(new Date(parseInt(event.start_time)));
       unique.indexOf(date) == -1 && unique.push(date);
     }
+  // sort unique dates from lower to upper
+  unique.sort((a, b) => a.replace('.', '') - b.replace('.', ''));
   // extract events foreach date
   unique.map(date => {
-    dates[unique] = {};
-    dates[unique].events = extractEvents(events, date);
+    dates[date] = {};
+    dates[date].events = extractEvents(events, date);
   })
   // return dates object for competition
   return dates;
@@ -118,7 +120,7 @@ const extractEvents = (events, date) => {
   for(let event of events){
     var event_date = formatDate(new Date(parseInt(event.start_time)));
     // if date matches, push event to event list for that day
-    if(event_date = date) events_list.push(event);
+    if(event_date == date) events_list.push(event);
   }
   // return events list for specified date
   return events_list;

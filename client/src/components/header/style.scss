@@ -2,7 +2,7 @@
 
 header{
   width: -webkit-fill-available;
-  height: 100px;
+  height: 80px;
   background-color: $secondary-bg;
   display: flex;
   flex-direction: row;
@@ -17,7 +17,7 @@ header{
 .logo{
   font-style: italic;
   font-weight: 600;
-  font-size: 40px;
+  font-size: 38px;
   line-height: 48px;
   letter-spacing: .03em;
   color: $primary-text-color;
@@ -45,7 +45,7 @@ nav{
 
 .header__left li{
   font-weight: 500;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 22px;
   color: $primary-text-color;
   cursor: pointer;
@@ -148,6 +148,10 @@ nav{
 .user__dropdown__item{
   padding: 10px;
   border-bottom: 1px solid $primary-bg;
+
+  &:last-of-type{
+    border-bottom: none;
+  }
 }
 
 .user__dropdown__personal{

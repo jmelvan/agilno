@@ -1,0 +1,199 @@
+@import '../../scss/colors';
+
+.betslip-wrapper{
+  width: 300px;
+  margin-top: 60px;
+  position: relative;
+}
+
+.betslip{
+  width: 300px;
+  overflow: hidden;
+  border-radius: 5px;
+}
+
+.betslip-header{
+  height: 45px;
+  background-color: $primary-bg;
+}
+
+.betslip-header__title{
+  padding: 0 20px;
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: .02em;
+  line-height: 22px;
+  color: $primary-text-color;
+  background-color: $secondary-bg;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: max-content;
+  height: 100%;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+}
+
+.betslip-nav{
+  padding: 15px 10px;
+  background-color: $secondary-bg;
+  border-top-right-radius: 5px;
+}
+
+.betslip-nav__type-select{
+  display: flex;
+  flex-direction: row;
+  border-radius: 5px;
+  background-color: $primary-bg;
+  overflow: hidden;
+}
+
+.betslip__type{
+  width: 50%;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: .02em;
+  cursor: pointer;
+  color: $secondary-text-color;
+  transition: background-color .35s ease, color .35s ease;
+
+  &.active{
+    background-color: $green;
+    color: $primary-text-color;
+  }
+}
+
+.betslip-options{
+  padding: 10px;
+  background-color: $secondary-bg;
+}
+
+.betslip__remove-all{
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: .01em;
+  cursor: pointer;
+  color: $secondary-text-color;
+  width: max-content;
+  transition: color .35s ease;
+  
+  @media (hover: hover) {
+    &:hover{
+      color: rgba(131, 148, 160, 0.6);
+    }
+  }
+}
+
+.betslip__bets{
+  background-color: $secondary-bg;
+  display: flex;
+  flex-direction: column;
+  
+  &.empty{
+    min-height: 345px;
+  }
+}
+
+.betslip__summary{
+  padding: 15px 10px;
+  padding-top: 30px;
+  background-color: $secondary-bg;
+}
+
+.betslip.multiple .betslip__summary{
+  padding-top: 20px !important;
+}
+
+.betslip__summary__h3{
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: .02em;
+  color: $primary-text-color;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.betslip__total-bet{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: .02em;
+  color: $secondary-text-color;
+  margin-top: 10px;
+}
+
+.betslip__total-bet__value{
+  font-weight: 700;
+}
+
+.betslip__total-win{
+  @extend .betslip__total-bet;
+  font-size: 14px !important;
+  color: $primary-text-color !important;
+  margin-top: 5px !important;
+}
+
+.betslip__total-win__value{
+  font-weight: 700;
+}
+
+.betslip__cta-wrapper{
+  padding: 15px 10px;
+  background-color: $secondary-bg;
+}
+
+.betslip__cta{
+  height: 45px;
+  border-radius: 5px;
+  background-color: $green;
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: .01em;
+  cursor: pointer;
+  color: $primary-text-color;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all .35s ease;
+
+  @media (hover: hover) {
+    &:hover{
+      background-color: rgba(12, 214, 100, .6);
+      color: #A5A7AB;
+    }
+  }
+}
+
+.betslip__empty{
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 500;
+  font-size: 18px;
+  letter-spacing: .01em;
+  color: $secondary-text-color;
+}
+
+.betslip__msg{
+  background-color: $secondary-bg;
+  padding: 0 10px;
+
+  & .popup__error,
+  & .popup__success{
+    padding: 10px !important;
+  }
+}
+
+.multiple__stake-win{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 10px;
+  margin-bottom: 15px;
+}

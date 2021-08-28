@@ -1,7 +1,8 @@
 @import '../../scss/colors';
 
 .sports{
-  grid-column: span 8;
+  flex: 1;
+  padding-right: 30px;
 }
 
 .sports__h2{

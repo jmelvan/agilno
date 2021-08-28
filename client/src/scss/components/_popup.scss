@@ -13,11 +13,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  pointer-events: none;
 }
 
 .popup-wrapper.opened{
   z-index: 999;
   opacity: 1;
+  pointer-events: all;
 }
 
 .popup-wrapper.closing{

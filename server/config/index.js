@@ -22,7 +22,8 @@ const error = {
 const successMsg = {
   register: "Your account has been created. Please confirm you email address before login.",
   editProfile: "You have successfully changed your personal info.",
-  deposit: "You have successfully transfered money to your account."
+  deposit: "You have successfully transfered money to your account.",
+  placeBet: "You have successfully placed bet."
 }
 
 const secrets = {

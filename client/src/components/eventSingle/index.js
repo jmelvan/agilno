@@ -1,4 +1,7 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { toggleBet } from '../../features/events/eventsSlice';
+import { ReactComponent as Lock } from '../../resources/icons/lock.svg';
 import './style.scss';
 
 class EventSingle extends React.Component {
@@ -12,7 +15,7 @@ class EventSingle extends React.Component {
   }
 
   render() {
-    const { event, results } = this.props;
+    const { event, results, toggleBet, bets } = this.props;
 
     return(
       <div className="event">
@@ -23,12 +26,18 @@ class EventSingle extends React.Component {
         <div className="event__quotas">
           {
             results.map((result, i) => {
-              return (
-                <div key={i} className="event__quota hover--opacity">
-                  <div className="event__quota__type">{ result }</div>
-                  <div className="event__quota__value">{ event.odds[result].value.toFixed(2) }</div>
-                </div>
-              )
+              if(event.odds && event.odds[result]){
+                return (
+                  <div key={i} 
+                    className={"event__quota hover--opacity" + ((bets[event.odds[result].event_id] && bets[event.odds[result].event_id].odd.type == result) ? " active" : "")} 
+                    onClick={() => toggleBet(event.odds[result], event)}
+                  >
+                    <div className="event__quota__type">{ result }</div>
+                    <div className="event__quota__value">{ event.odds[result].value.toFixed(2) }</div>
+                  </div>
+                )
+              } else 
+                return <div className="event__quota--empty"><Lock /></div>
             })
           }
         </div>
@@ -37,4 +46,18 @@ class EventSingle extends React.Component {
   }
 }
 
-export default EventSingle;
+function mapStateToProps(state) {
+  const { events: { bets } } = state;
+  
+  return {
+    bets
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    toggleBet: (odd, event) => dispatch(toggleBet({event: event, odd: odd}))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(EventSingle);

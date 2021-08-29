@@ -23,12 +23,11 @@ const createBetslipBet = (betslip_id, quota) => {
 
 // function to process bets after events are finished
 const processBets = (req, res) => {
-  var promises = []; // create array of promises for 2 functions that must be executed
-
-  promises.push(handleResultsInMultiple()); // handle results in multiple betslips
-  promises.push(handleResultsInSingle()); // handle results in single betslips
-  // after all functions executes successfully, send response to client
-  Promise.all(promises).then(() => res.sendStatus(200));
+  // didn't use here Promises array because if functions were called in the same time, pool would be taken and wouldn't be able to fulfill task
+  handleResultsInMultiple()// handle results in multiple betslips
+    .then(() => handleResultsInSingle()) // handle results in single betslips
+    .then(() => allOtherBetslipsLose()) // we marked winners, now we mark losers in type single
+    .then(() => res.sendStatus(200)) // after all functions executes successfully, send response to client
 }
 
 // function to handle results in multiple betslips
@@ -43,8 +42,12 @@ const handleResultsInMultiple = () => {
       for(let betslip of result.rows)
         betslip.total_bets == betslip.total_wins ? win_betslips.push(betslip.id) : loss_betslips.push(betslip.id);
       // winners mark with 'win', looser mark with 'loss'
-      win_betslips.length && betslipResult(win_betslips, 'win');
-      loss_betslips.length && betslipResult(loss_betslips, 'loss');
+      if(win_betslips.length) 
+        betslipResult(win_betslips, 'win').then(() => { // we have to wait for function to finih because pool is taken
+          loss_betslips.length && betslipResult(loss_betslips, 'loss');
+        });
+      else
+        loss_betslips.length && betslipResult(loss_betslips, 'loss');
       // resolve promise
       resolve();
     })
@@ -67,9 +70,13 @@ const handleResultsInSingle = () => {
         win_pairs.push({ betslip_id: pair.betslip_id, quota_id: pair.quota_id });
       }
       // if there are winner betslips, mark them with 'win'
-      win_betslips.length && betslipResult(win_betslips, 'win');
-      // if there are winner pairs, mark them too, with 'win'
-      win_pairs.length && winPairs(win_pairs);
+      if(win_betslips.length)
+        betslipResult(win_betslips, 'win').then(() => { // we have to wait for function to finih because pool is taken
+          // if there are winner pairs, mark them too, with 'win'
+          win_pairs.length && winPairs(win_pairs);
+        })
+      else
+        win_pairs.length && winPairs(win_pairs);
       // resolve at the end
       resolve()
     });
@@ -78,16 +85,21 @@ const handleResultsInSingle = () => {
 
 // function to mark winner betslips
 const betslipResult = (betslips, status) => {
-  var params = []; // params for query builder
-  // we saved winner betslips in array, but we don't know how many of them would be there
-  // so we counstruct query like this
-  // we could handle this also by sending new request for every betslip, but it's better that our sql database handles them all together
-  // we save time and resources 
-  for(var i = 2; i <= betslips.length+1; i++)
-    params.push('$' + i);
-  // build query
-  var query = 'UPDATE betslip SET status=$1 WHERE id IN ('+params.join(', ')+')';
-  pool.query(query, [status, ...betslips], (error) => {if(error) throw error});
+  return new Promise((resolve, reject) => {
+    var params = []; // params for query builder
+    // we saved winner betslips in array, but we don't know how many of them would be there
+    // so we counstruct query like this
+    // we could handle this also by sending new request for every betslip, but it's better that our sql database handles them all together
+    // we save time and resources 
+    for(var i = 2; i <= betslips.length+1; i++)
+      params.push('$' + i);
+    // build query
+    var query = 'UPDATE betslip SET status=$1 WHERE id IN ('+params.join(', ')+')';
+    pool.query(query, [status, ...betslips], (error) => {
+      if(error) reject();
+      resolve();
+    });
+  })
 }
 
 // function to mark winner pairs
@@ -95,6 +107,16 @@ const winPairs = (pairs) => {
   // we have to mark one pair at the time (can't use same logic as in betslipResult because there's no primary key)
   for(let pair of pairs)
     pool.query('UPDATE betslip_bet SET status=$1 WHERE betslip_id=$2 AND quota_id=$3', ['win', pair.betslip_id, pair.quota_id], (error) => {if(error) throw error});
+}
+
+// function to mark all losers in betslip type single
+const allOtherBetslipsLose = () => {
+  return new Promise((resolve, reject) => {
+    pool.query('UPDATE betslip SET status=$1 WHERE status=$2 AND type=$3', ['loss', 'unprocessed', 'single'], err => {
+      if(err) reject();
+      resolve();
+    });
+  })
 }
 
 // middleware function to check if cashout for selected betslip is available before proceeding to cashout

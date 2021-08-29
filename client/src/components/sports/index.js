@@ -7,7 +7,7 @@ import './style.scss';
 class Sports extends React.Component {
 
   componentDidMount() {
-    this.props.getEvents();
+    this.props.getEvents().then(() => console.log(this.props.sports));
   }
 
   render() {
@@ -17,9 +17,11 @@ class Sports extends React.Component {
       <div className="sports">
         <h2 className="sports__h2">All events</h2>
         {
-          sports && Object.keys(sports).map((sport, i) => {
-            return <SportSingle key={i} name={sport} competitions={sports[sport].competitions} results={sports[sport].results} />
-          })
+          sports && Object.keys(sports).length ?
+            Object.keys(sports).map((sport, i) => {
+              return <SportSingle key={i} name={sport} competitions={sports[sport].competitions} results={sports[sport].results} />
+            })
+            : <div className="sports__empty">No unfinished events.</div>
         }
       </div>
     )

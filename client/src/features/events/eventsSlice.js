@@ -12,6 +12,9 @@ export const getEvents = createAsyncThunk('events/get', eventsAPI.get);
 // place bet thunk
 export const placeBet = createAsyncThunk('user/place-bet', eventsAPI.placeBet);
 
+// cashout thunk
+export const cashout = createAsyncThunk('user/cashout', eventsAPI.cashout);
+
 export const eventsSlice = createSlice({
   name: 'events',
   initialState,

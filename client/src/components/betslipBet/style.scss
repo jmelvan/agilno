@@ -26,6 +26,10 @@
   font-size: 13px;
   letter-spacing: .01em;
   color: $primary-text-color;
+
+  &.winning{
+    color: $green;
+  }
 }
 
 .bet__remove{

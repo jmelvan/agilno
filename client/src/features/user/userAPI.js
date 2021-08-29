@@ -7,7 +7,8 @@ export const userAPI = {
   checkUserLogin,
   editProfile,
   deposit,
-  updateUserInStore
+  updateUserInStore,
+  getUserBets
 }
 
 export { logout };
@@ -70,6 +71,15 @@ function deposit(params) {
 async function checkUserLogin(params, { rejectWithValue }) {
   try {
     return await helpers.loadFromStorage('user');
+  } catch (err) {
+    return rejectWithValue();
+  }
+}
+
+// function to get user bets
+async function getUserBets(params, { rejectWithValue }) {
+  try {
+    return await helpers.getBets();
   } catch (err) {
     return rejectWithValue();
   }

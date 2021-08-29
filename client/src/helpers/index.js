@@ -1,4 +1,5 @@
 import axios from 'axios';
+import betslip from '../components/betslip';
 import config from '../config';
 
 // function to build request to rest API
@@ -126,6 +127,57 @@ const extractEvents = (events, date) => {
   return events_list;
 }
 
+// function to get user bets
+const getBets = () => {
+  return new Promise((resolve, reject) => {
+    buildRequest(undefined, '/user/bets', true).then(bets => {
+      // after we got user bets from server we need to format them so we can easily use them in app
+      var betslips = formBetslips(bets);
+      // resolve at the end
+      resolve(betslips);
+    }).catch(err => reject(err));
+  })
+}
+
+// function to format bets in betslips
+const formBetslips = (bets) => {
+  var unique = extractUniqueBetslips(bets),
+    betslips = {};
+  // map through unique betslips
+  unique.map(betslip => {
+    betslips[betslip] = {}; // create empty object foreach unique betslip id
+    betslips[betslip].pairs = extractPairs(bets, betslip);
+    // every bet from query has fields status, total stake and type which is refered actually for betslip fields and not pair fields
+    // we need to get one of statuses, total stakes and types and set it as betslip status (only one because all are the same for all bets in single betslip)
+    betslips[betslip].status = betslips[betslip].pairs[0].betslip_status;
+    betslips[betslip].total_stake = betslips[betslip].pairs[0].total_stake;
+    betslips[betslip].type = betslips[betslip].pairs[0].betslip_type;
+  })
+  // return betslips object
+  return betslips;
+}
+
+// extract unique bestlips from bets
+const extractUniqueBetslips = (bets) => {
+  var unique = [];
+  // loop through all bets and check for betslip id in unique
+  for(let bet of bets)
+    unique.indexOf(bet.betslip_id) == -1 && unique.push(bet.betslip_id)
+  // return unieuq betslips
+  return unique
+}
+
+// function to extract pairs for single betslip
+const extractPairs = (bets, betslip_id) => {
+  var pairs = [];
+  // loop through all bets and check betslip id
+  for(let bet of bets)
+    if(bet.betslip_id == betslip_id)
+      pairs.push(bet);
+  // return betslip pairs (bets)
+  return pairs;
+}
+
 // function to format date, return format: dd.mm.YYYY
 const formatDate = (d) => {
   let y = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
@@ -178,7 +230,8 @@ const helpers = {
   updateLocalStorage,
   loadFromStorage,
   authHeader,
-  popupMsg
+  popupMsg,
+  getBets
 }
 
 export default helpers;

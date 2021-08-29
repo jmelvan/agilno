@@ -11,8 +11,8 @@ class BetslipBet extends React.Component {
       stake: '',
       win: '',
       result_text: {
-        1: props.bet.event.host,
-        2: props.bet.event.guest,
+        '1': props.bet.event.host,
+        '2': props.bet.event.guest,
         'x': 'Draw'
       }
     }
@@ -20,6 +20,7 @@ class BetslipBet extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
+    prevProps.placeBetError && this.props.removeBetslipError(); // remove error if it's shown
     // recalculate win if another quota for the same event is selected and stake is not empty
     if((prevProps.bet.odd.id != this.props.bet.odd.id && this.state.stake != ''))
       this.calculateStakeWin();
@@ -28,8 +29,6 @@ class BetslipBet extends React.Component {
 
   // handle stake and win inputs
   handleStakeWin(e) {
-    this.props.placeBetError && this.props.removeBetslipError(); // remove error if it's shown
-
     const reg = new RegExp('([0-9]*[.])?[0-9]+'); // float numbers check
     // since it's text input, parse to numbers (text input because number input doen't handle text input)
     var number = parseFloat(e.target.value);

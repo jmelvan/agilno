@@ -30,6 +30,9 @@ export const editProfile = createAsyncThunk('users/edit-profile', async (params,
 // checkUserLogin thunk
 export const checkUserLogin = createAsyncThunk('users/checkUserLogin', userAPI.checkUserLogin)
 
+// get bets thunk
+export const getUserBets = createAsyncThunk('users/bets', userAPI.getUserBets)
+
 // deposit thunk
 export const deposit = createAsyncThunk('users/deposit', async (params, { dispatch, rejectWithValue }) => {
   try {
@@ -60,8 +63,7 @@ export const userSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder
-      .addCase(login.fulfilled, (state, { payload: { email, name, surname, saldo, role } }) => {
+    builder.addCase(login.fulfilled, (state, { payload: { email, name, surname, saldo, role } }) => {
         state.isLoggedIn = true;
         state.email = email;
         state.name = name;
@@ -69,8 +71,7 @@ export const userSlice = createSlice({
         state.balance = saldo;
         state.role = role;
       })
-    builder
-      .addCase(checkUserLogin.fulfilled, (state, { payload: { email, name, surname, saldo, role } }) => {
+    builder.addCase(checkUserLogin.fulfilled, (state, { payload: { email, name, surname, saldo, role } }) => {
         state.isLoggedIn = true;
         state.email = email;
         state.name = name;
@@ -78,28 +79,26 @@ export const userSlice = createSlice({
         state.balance = saldo;
         state.role = role;
       })
-    builder
-      .addCase(editProfile.fulfilled, (state, { payload: { msg, newName, newSurname } }) => {
+    builder.addCase(editProfile.fulfilled, (state, { payload: { msg, newName, newSurname } }) => {
         state.editProfileSuccessMsg = msg;
-      })
-      .addCase(editProfile.rejected, (state, { payload: { error } }) => {
+      }).addCase(editProfile.rejected, (state, { payload: { error } }) => {
         state.editProfileErrorMsg = error;
       })
-    builder
-      .addCase(deposit.fulfilled, (state, { payload: { msg, amount } }) => {
+    builder.addCase(deposit.fulfilled, (state, { payload: { msg, amount } }) => {
         state.depositSuccessMsg = msg;
         state.balance += parseFloat(amount);
-      })
-      .addCase(deposit.rejected, (state, { payload: { error } }) => {
+      }).addCase(deposit.rejected, (state, { payload: { error } }) => {
         state.depositErrorMsg = error;
       })
-    builder
-      .addCase(updateUserInStore.fulfilled, (state, { payload: { email, name, surname, saldo, role } }) => {
+    builder.addCase(updateUserInStore.fulfilled, (state, { payload: { email, name, surname, saldo, role } }) => {
         state.email = email;
         state.name = name;
         state.surname = surname;
         state.balance = saldo;
         state.role = role;
+      })
+    builder.addCase(getUserBets.fulfilled, (state, { payload }) => {
+        state.betslips = payload;
       })
   },
 })

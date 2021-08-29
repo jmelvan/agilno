@@ -22,6 +22,8 @@ class Betslip extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
+    prevProps.placeBetError && this.props.removeBetslipError(); // remove error if it's shown
+
     if(prevProps.bets != this.props.bets)
       this.state.type == 'single' ? this.calculateSingleTotalStakeWin() : this.calculateMultipleTotalOdds();
   }
@@ -53,8 +55,6 @@ class Betslip extends React.Component {
 
   // handle stake and win inputs
   handleStakeWin(e) {
-    this.props.placeBetError && this.props.removeBetslipError(); // remove error if it's shown
-
     const reg = new RegExp('([0-9]*[.])?[0-9]+'); // float numbers check
     // since it's text input, parse to numbers (text input because number input doen't handle text input)
     var number = parseFloat(e.target.value);
@@ -91,6 +91,9 @@ class Betslip extends React.Component {
   buildBetslipRequest() {
     const { type, totalStake } = this.state;
     const { bets, placeBet, setBetslipError, removeAllBets, removeBetslipSuccess, updateUserInStore } = this.props;
+    // starting condition
+    if (!Object.keys(bets).length) return setBetslipError('Please add bets.');
+
     var quotas = [], send = true;
     // build quotas query based on betslip type
     if(type == 'single'){
@@ -113,8 +116,8 @@ class Betslip extends React.Component {
       placeBet(type, quotas, totalStake).then(() => {
         removeAllBets();
         updateUserInStore();
+        setTimeout(() => removeBetslipSuccess(), 2000);
       });
-      setTimeout(() => removeBetslipSuccess(), 2000);
     }
   }
 

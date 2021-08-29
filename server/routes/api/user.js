@@ -25,6 +25,9 @@ router.post('/deposit', auth.required, helpers.checkRequiredFields, user.deposit
 // route for placing bet
 router.post('/place-bet', auth.required, helpers.checkRequiredFields, helpers.validateBet, user.placeBet, user.attachUserData, user.takeMoneyFromUser);
 
+// route for getting betslips
+router.post('/bets', auth.required, user.getBets);
+
 // route for cashout single betslip
 router.post('/cashout', auth.required, helpers.checkRequiredFields, betslip.isCashoutAvailable, betslip.cashout);
 

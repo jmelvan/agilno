@@ -1,7 +1,7 @@
 const { pool } = require('./connect');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const { error, secrets, successMsg } = require('../config');
+const { error, secrets, successMsg, long_queries } = require('../config');
 const betslip = require('./betslip');
 
 // function to get user by email
@@ -160,6 +160,16 @@ var takeMoneyFromUser = (req, res) => {
   })
 }
 
+// function to get user bets
+var getBets = (req, res) => {
+  const { payload: { email } } = req;
+
+  pool.query(long_queries.user.get_bets, [email], (err, result) => {
+    if (err) throw err;
+    res.json(result.rows);
+  })
+}
+
 module.exports = { 
   getUser,
   handleSignUp, 
@@ -172,5 +182,6 @@ module.exports = {
   deposit, 
   isUserAdmin,
   placeBet,
-  takeMoneyFromUser
+  takeMoneyFromUser,
+  getBets
 };

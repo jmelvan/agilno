@@ -1,0 +1,22 @@
+@import '../../scss/colors';
+
+.betslip.my{
+  grid-column: span 4;
+  height: max-content;
+}
+
+.my-betslip__summary{
+  padding: 20px 10px;
+  background-color: $secondary-bg;
+}
+
+.my-betslip__summary__h4{
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+  color: $secondary-text-color;
+
+  & > span{
+    color: $primary-text-color;
+  }
+}

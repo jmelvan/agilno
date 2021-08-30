@@ -7,7 +7,7 @@ import './style.scss';
 class Sports extends React.Component {
 
   componentDidMount() {
-    this.props.getEvents().then(() => console.log(this.props.sports));
+    this.props.getEvents();
   }
 
   render() {

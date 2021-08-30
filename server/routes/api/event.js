@@ -13,6 +13,9 @@ const validate_request = [...verify_admin, helpers.checkRequiredFields];
 // route for listing all unfinished events
 router.get('/', event.get);
 
+// route for listing all unfinished events
+router.get('/get-all', event.getAll);
+
 // route for listing all unfinished events in selected sport
 router.get('/in/:sport_name', event.getBySport);
 
@@ -23,13 +26,16 @@ router.post('/add', ...validate_request, event.checkUnique, event.add);
 router.post('/remove', ...validate_request, event.remove);
 
 // route for finishing only one unfinished events
-router.post('/finish', ...validate_request, event.finishOneEvent);
+router.post('/finish', ...validate_request, event.finishOneEvent, betslip.processBets);
 
 // route for finishing all unfinished events
 router.post('/finish-all', ...validate_request, event.finishAllEvents, betslip.processBets);
 
 // route for getting all odds for all unfinished events
 router.get('/quotas', quota.get);
+
+// route for getting all odds for all events even finished
+router.get('/all-quotas', quota.getAll);
 
 // route for getting all odds for selected event
 router.get('/:event_id/quotas', quota.getByEvent);

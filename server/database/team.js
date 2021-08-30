@@ -1,7 +1,15 @@
 const { pool } = require('./connect');
 const { error } = require('../config');
 
-// function to get all sports
+// function to get all teams
+var getAll = (req, res) => {
+  pool.query('SELECT * FROM team', (error, result) => {
+    if (error) throw error;
+    res.json(result.rows);
+  })
+}
+
+// function to get teams playing selected sports
 var getBySport = (req, res) => {
   pool.query('SELECT * FROM team WHERE sport_name=$1', [req.params.sport_name], (error, result) => {
     if (error) throw error;
@@ -32,12 +40,12 @@ var add = (req, res) => {
 
 // function to delete existing team
 var remove = (req, res) => {
-  const { body: { query: { name } } } = req;
+  const { body: { query: { id } } } = req;
 
-  pool.query('DELETE FROM team WHERE name=$1', [name], (error, result) => {
+  pool.query('DELETE FROM team WHERE id=$1', [id], (error, result) => {
     if (error) throw error;
     res.sendStatus(200);
   })
 }
 
-module.exports = { getBySport, checkUnique, add, remove };
+module.exports = { getAll, getBySport, checkUnique, add, remove };

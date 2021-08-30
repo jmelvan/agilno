@@ -3,11 +3,27 @@ import { eventsAPI } from './eventsAPI';
 
 const initialState = {
   sports: undefined,
-  bets: {}
+  bets: {},
+  events: undefined
 };
 
 // get events thunk
 export const getEvents = createAsyncThunk('events/get', eventsAPI.get);
+
+// get all events thunk
+export const getAllEvents = createAsyncThunk('events/get-all', eventsAPI.getAll);
+
+// delete events thunk
+export const deleteEvent = createAsyncThunk('events/delete', eventsAPI.deleteEvent);
+
+// delete events thunk
+export const addEvent = createAsyncThunk('events/add', eventsAPI.add);
+
+// finis one event thunk
+export const finishOne = createAsyncThunk('events/finish', eventsAPI.finishOne);
+
+// finis all events thunk
+export const finishAll = createAsyncThunk('events/finish-all', eventsAPI.finishAll);
 
 // place bet thunk
 export const placeBet = createAsyncThunk('user/place-bet', eventsAPI.placeBet);
@@ -49,6 +65,9 @@ export const eventsSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(getEvents.fulfilled, (state, { payload }) => {
       state.sports = payload;
+    })
+    builder.addCase(getAllEvents.fulfilled, (state, { payload }) => {
+      state.events = payload;
     })
     builder.addCase(placeBet.fulfilled, (state, { payload: { msg } }) => {
       state.placeBetSuccess = msg;

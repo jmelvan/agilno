@@ -23,7 +23,7 @@ router.post('/edit-profile', auth.required, user.changePersonalData);
 router.post('/deposit', auth.required, helpers.checkRequiredFields, user.deposit);
 
 // route for placing bet
-router.post('/place-bet', auth.required, helpers.checkRequiredFields, helpers.validateBet, user.placeBet, user.attachUserData, user.takeMoneyFromUser);
+router.post('/place-bet', auth.required, helpers.checkRequiredFields, helpers.validateBet, user.attachUserData, user.takeMoneyFromUser, user.placeBet);
 
 // route for getting betslips
 router.post('/bets', auth.required, user.getBets);

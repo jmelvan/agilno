@@ -10,8 +10,8 @@ class MyBetslipBet extends React.Component {
       stake: props.bet.quota_stake,
       win: undefined,
       result_text: {
-        '1': props.bet.host_name,
-        '2': props.bet.guest_name,
+        '1': (props.bet.competition_type == 'individual' ? props.bet.host_player : props.bet.host_name),
+        '2': (props.bet.competition_type == 'individual' ? props.bet.guest_player : props.bet.guest_name),
         'x': 'Draw'
       }
     }
@@ -37,7 +37,13 @@ class MyBetslipBet extends React.Component {
     return(
       <div className="betslip__bet">
         <div className="bet__header">
-          <div className={"bet__opponents" + (bet.bet_status == 'win' ? ' winning' : '')}>{ bet.host_name } &nbsp;&ndash;&nbsp; { bet.guest_name }</div>
+          <div className={"bet__opponents" + (bet.bet_status == 'win' ? ' winning' : '')}>
+          { 
+            bet.competition_type == 'individual' ? bet.host_player : bet.host_name
+          } &nbsp;&ndash;&nbsp; { 
+            bet.competition_type == 'individual' ? bet.guest_player : bet.guest_name
+          }
+          </div>
         </div>
         <div className="bet__header">
           <div className="bet__match-result">

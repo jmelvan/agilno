@@ -1,0 +1,252 @@
+@import '../../scss/colors';
+
+.admin-content-holder{
+  padding-top: 30px;
+  padding-bottom: 160px;
+}
+
+.admin-header{
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 80px;
+  background-color: $secondary-bg;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-title{
+  font-weight: 600;
+  font-size: 30px;
+  letter-spacing: .02em;
+  color: $primary-text-color;
+}
+
+.admin-header__right{
+  display: flex;
+  flex-direction: row;
+}
+
+.admin-header__cta{
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: .02em;
+  padding: 0 20px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: $primary-text-color;
+  background-color: $primary-bg;
+  border-radius: 20px;
+  cursor: pointer;
+
+  &.green{
+    background-color: $green !important;
+  }
+
+  &:not(:last-of-type){
+    margin-right: 20px;
+  }
+}
+
+.slider-wrapper{
+  width: -webkit-fill-available;
+  padding-top: 60px;
+}
+
+.slider-title{
+  font-weight: 500;
+  font-size: 28px;
+  letter-spacing: .02em;
+  color: $primary-text-color;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.add-new{
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: .02em;
+  color: $primary-text-color;
+  background-color: $secondary-bg;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.slider{
+  width: -webkit-fill-available;
+  overflow-x: auto;
+  margin-top: 30px;
+  display: flex;
+  flex-direction: row;
+}
+
+.slider__empty{
+  font-weight: 500;
+  font-size: 18px;
+  letter-spacing: .02em;
+  color: $secondary-text-color;
+}
+
+.admin-sport{
+  border-radius: 5px;
+  min-width: 200px;
+  background-color: $secondary-bg;
+  padding: 25px 20px;
+}
+
+.admin-item{
+  border-radius: 5px;
+  min-width: 220px;
+  background-color: $secondary-bg;
+  padding: 20px 15px;
+
+  &.finished{
+    background-color: rgba(12, 214, 100, .3);
+  }
+
+  &:not(:last-of-type){
+    margin-right: 30px;
+  }
+}
+
+.admin-item__name{
+  font-weight: 500;
+  font-size: 18px;
+  letter-spacing: .02em;
+  color: $primary-text-color;
+  margin-bottom: 15px;
+  text-transform: capitalize;
+}
+
+.admin-item__config{
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: .02em;
+  color: $secondary-text-color;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 5px 0;
+}
+
+.admin-item__delete{
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: .02em;
+  color: rgba(222, 66, 45, .8);
+  text-decoration: underline;
+  margin-top: 10px;
+  cursor: pointer;
+  width: max-content;
+}
+
+.admin-item__finish{
+  @extend .admin-item__delete;
+  color: rgba(12, 214, 100, .3) !important;
+}
+
+.admin-popup{
+  padding: 30px;
+  border-radius: 10px;
+  width: 500px;
+  background-color: $secondary-bg;
+  position: relative;
+}
+
+.admin-popup__title{
+  font-weight: 500;
+  font-size: 25px;
+  letter-spacing: .02em;
+  color: $primary-text-color;
+  margin-bottom: 15px;
+}
+
+.admin-popup__row{
+  padding: 10px 0;
+
+  &.grid-3{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 10px;
+
+    & > input{
+      grid-column: span 1 !important;
+    }
+  }
+  &.grid-2{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 10px;
+
+    & > input{
+      grid-column: span 1 !important;
+    }
+  }
+}
+
+.admin-popup__input{
+  width: -webkit-fill-available;
+  height: 55px;
+  background-color: $primary-bg;
+  font-family: 'Inter';
+  font-size: 16px;
+  font-weight: 400;
+  padding: 0 20px;
+  margin: 0;
+  color: $primary-text-color;
+  border: none;
+  outline: none;
+}
+
+.admin-popup__select{
+  width: -webkit-fill-available;
+  height: 55px;
+  display: flex;
+  flex-direction: row;
+}
+
+.admin-popup__select-option{
+  flex: 1;
+  background-color: $primary-bg;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  color: $secondary-text-color;
+  transition: all .35s ease;
+
+  &.selected{
+    background-color: $green;
+    color: $primary-text-color;
+  }
+
+  &:not(:last-of-type){
+    border-right: 1px solid $secondary-bg;
+  }
+}
+
+.admin-popup__cta{
+  color: $primary-text-color !important;
+}
+
+select{
+  width: -webkit-fill-available;
+  padding: 5px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 0;
+  height: 50px;
+  background-color: $primary-bg;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  color: $primary-text-color;
+}

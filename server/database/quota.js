@@ -1,9 +1,17 @@
 const { pool } = require('./connect');
-const { error } = require('../config');
+const { error, long_queries } = require('../config');
 
 // function to get all quotas for all unfinished events
 var get = (req, res) => {
   pool.query('SELECT quota.id, event_id, type, value from quota LEFT JOIN event ON event_id=event.id WHERE event.end_time IS NULL', (error, result) => {
+    if (error) throw error;
+    res.json(result.rows);
+  })
+}
+
+// function to get all quotas
+var getAll = (req, res) => {
+  pool.query(long_queries.quotas.get_all, (error, result) => {
     if (error) throw error;
     res.json(result.rows);
   })
@@ -48,4 +56,4 @@ var remove = (req, res) => {
   })
 }
 
-module.exports = { get, getByEvent, checkUnique, add, remove };
+module.exports = { get, getAll, getByEvent, checkUnique, add, remove };

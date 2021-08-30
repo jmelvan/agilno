@@ -12,7 +12,20 @@ import './style.scss';
 class Dashboard extends React.Component {
 
   componentDidMount() {
-    this.props.checkUserLogin();
+    const { checkUserLogin } = this.props;
+
+    checkUserLogin().unwrap().then(user => {
+      user.role == 'admin' && window.location.replace('/admin');
+    });
+  }
+
+  componentDidUpdate(prevProps) {
+    const { isLoggedIn, checkUserLogin } = this.props;
+
+    if(prevProps.isLoggedIn != isLoggedIn)
+      checkUserLogin().unwrap().then(user => {
+        user.role == 'admin' && window.location.replace('/admin');
+      });
   }
 
   render() {
@@ -32,10 +45,18 @@ class Dashboard extends React.Component {
   }
 }
 
+function mapStateToProps(state) {
+  const { user: { isLoggedIn } } = state;
+
+  return {
+    isLoggedIn
+  }
+}
+
 const mapDispatchToProps = (dispatch) => {
   return {
     checkUserLogin: () => dispatch(checkUserLogin())
   }
 }
 
-export default connect(null, mapDispatchToProps)(Dashboard);
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

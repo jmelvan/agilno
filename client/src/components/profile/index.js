@@ -16,10 +16,11 @@ class Profile extends React.Component {
     }
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     const { isProfileOpened, name, surname } = this.props;
     
-    isProfileOpened && name != this.state.name && surname != this.state.surname && this.setState({ name: name, surname: surname });
+    if(prevProps.isProfileOpened != isProfileOpened)
+      this.setState({ name: name, surname: surname });
   }
 
   startClosing() {
@@ -87,7 +88,7 @@ function mapStateToProps(state) {
 const mapDispatchToProps = (dispatch) => {
   return {
     toggleProfile: () => dispatch(toggleProfile()),
-    editProfile: (name, surname) => dispatch(editProfile({ name: name, surname: surname }))
+    editProfile: (name, surname) => dispatch(editProfile({ newName: name, newSurname: surname }))
   }
 }
 

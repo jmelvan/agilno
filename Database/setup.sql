@@ -1,10 +1,3 @@
-CREATE DATABASE casino
-    ENCODING = 'UTF8'
-    LC_COLLATE = 'C'
-    LC_CTYPE = 'C'
-    TABLESPACE = pg_default
-    CONNECTION LIMIT = -1;
-
 CREATE TABLE public."user"
 (
     name text COLLATE pg_catalog."default",

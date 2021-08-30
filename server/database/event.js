@@ -9,6 +9,14 @@ var get = (req, res) => {
   })
 }
 
+// function to get all events
+var getAll = (req, res) => {
+  pool.query(long_queries.events.get_all_query, (error, result) => {
+    if (error) throw error;
+    res.json(result.rows);
+  })
+}
+
 // function to get all unfinished events by sport name
 var getBySport = (req, res) => {
   // query that returns (host, host_img, guest, guest_img, start_time, competition_name, competition_type) for events with condition that filters sport names
@@ -43,11 +51,17 @@ var add = (req, res) => {
 // function to delete existing event
 var remove = (req, res) => {
   const { body: { query: { id } } } = req;
-
-  pool.query('DELETE FROM event WHERE id=$1', [id], (error, result) => {
+  
+  // first we have to remove all quotas for that event
+  pool.query('DELETE FROM quota WHERE event_id=$1', [id], (error, result) => {
     if (error) throw error;
-    res.sendStatus(200);
+    // then we remove event
+    pool.query('DELETE FROM event WHERE id=$1', [id], (error, result) => {
+      if (error) throw error;
+      res.sendStatus(200);
+    })
   })
+  
 }
 
 // function to finish all unfinished events
@@ -70,7 +84,7 @@ var finishOneEvent = (req, res) => {
   pool.query(query, [req.body.query.id], (err, result) => {
     if (err) throw err;
     if (result.rowCount) finishEvent(result.rows[0]); 
-    res.sendStatus(200);
+    next();
   })
 }
 
@@ -86,4 +100,4 @@ var finishEvent = (event) => {
 }
 
 
-module.exports = { get, getBySport, checkUnique, add, remove, finishOneEvent, finishAllEvents };
+module.exports = { get, getAll, getBySport, checkUnique, add, remove, finishOneEvent, finishAllEvents };

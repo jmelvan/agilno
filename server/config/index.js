@@ -16,7 +16,8 @@ const error = {
   cashout_not_available: "Unfortunatelly, that betslip is not wining and not valid for cashout.",
   cashout_error: "Unfortunatelly, there has been problem with your cashout, please try again latter.",
   already_cashedout: "You have already cashed out this betslip.",
-  credit_card: "We couldn't proccess the payment. Please use valid credit card."
+  credit_card: "We couldn't proccess the payment. Please use valid credit card.",
+  insufficient_founds: "You don't have enough money. Please, deposit your money first."
 }
 
 const successMsg = {
@@ -39,8 +40,8 @@ const fields = {
     "user/cashout": ["betslip_id"],
     "sport/add": ["name", "type", "result"],
     "sport/remove": ["name"],
-    "teams/add": ["name", "type"],
-    "teams/remove": ["name"],
+    "teams/add": ["name", "type", "sport_name"],
+    "teams/remove": ["id"],
     "teams/asign-player": ["id", "player_id"],
     "player/add": ["name", "surname", "sport_name", "country"],
     "player/remove": ["id"],
@@ -58,8 +59,12 @@ const fields = {
 
 const long_queries = {
   events: {
-    get_query: 'SELECT event.id as event_id, host.name as host, host.img as host_img, guest.name as guest, guest.img as guest_img, start_time, competition.name as competition_name, competition.type as competition_type, sport.name as sport_name, sport.result as quota_types FROM event LEFT JOIN competition ON competition_id=competition.id JOIN team as host ON host_id=host.id JOIN team as guest ON guest_id=guest.id JOIN sport ON competition.sport_name=sport.name WHERE end_time IS NULL',
+    get_query: "SELECT event.id as event_id, host.name as host, host.img as host_img, guest.name as guest, guest.img as guest_img, CONCAT(player_host.name, ' ', player_host.surname) as host_player, CONCAT(player_guest.name, ' ', player_guest.surname) as guest_player, start_time, competition.name as competition_name, competition.type as competition_type, sport.name as sport_name, sport.result as quota_types FROM event LEFT JOIN competition ON competition_id=competition.id JOIN team as host ON event.host_id=host.id JOIN team as guest ON event.guest_id=guest.id JOIN player as player_host ON event.host_id=player_host.id JOIN player as player_guest ON event.guest_id=player_guest.id JOIN sport ON competition.sport_name=sport.name WHERE end_time IS NULL",
+    get_all_query: "SELECT event.id as event_id, event.win as event_result, host.name as host, host.img as host_img, guest.name as guest, guest.img as guest_img, CONCAT(player_host.name, ' ', player_host.surname) as host_player, CONCAT(player_guest.name, ' ', player_guest.surname) as guest_player, start_time, competition.name as competition_name, competition.type as competition_type, sport.name as sport_name, sport.result as quota_types FROM event LEFT JOIN competition ON competition_id=competition.id LEFT JOIN team as host ON host_id=host.id LEFT JOIN team as guest ON guest_id=guest.id LEFT JOIN player as player_host ON event.host_id=player_host.id LEFT JOIN player as player_guest ON event.guest_id=player_guest.id JOIN sport ON competition.sport_name=sport.name",
     finish_all: 'SELECT event.id, sport.result as result FROM event JOIN competition ON competition_id=competition.id JOIN sport ON competition.sport_name=sport.name WHERE end_time IS NULL'
+  },
+  quotas: {
+    get_all: "SELECT quota.id, event_id, quota.type, quota.value, host.name as host_name, guest.name as guest_name, CONCAT(player_host.name, ' ', player_host.surname) as host_player, CONCAT(player_guest.name, ' ', player_guest.surname) as guest_player, competition.type as competition_type FROM quota JOIN event ON event_id=event.id LEFT JOIN team AS host ON event.host_id=host.id LEFT JOIN team AS guest ON event.guest_id=guest.id LEFT JOIN player as player_host ON event.host_id=player_host.id LEFT JOIN player as player_guest ON event.guest_id=player_guest.id LEFT JOIN competition ON competition.id=event.competition_id"
   },
   betslip: {
     wins_in_multiple: "SELECT betslip.id, (SELECT count(*) FROM betslip_bet JOIN betslip as b2 ON b2.id=betslip_id WHERE betslip_id=betslip.id) as total_bets, (SELECT count(*) FROM betslip_bet LEFT JOIN quota as q2 ON betslip_bet.quota_id=q2.id LEFT JOIN event as e2 ON q2.event_id=e2.id WHERE betslip_id=betslip.id AND e2.win=q2.type) as total_wins FROM betslip WHERE betslip.status='unprocessed' AND betslip.type='multiple'",
@@ -68,7 +73,7 @@ const long_queries = {
     get_cashout_single: "SELECT betslip.id as betslip_id, betslip.user_email, sum(quota.value*betslip_bet.stake) as cashout FROM betslip LEFT JOIN betslip_bet ON betslip_bet.betslip_id=betslip.id LEFT JOIN quota ON betslip_bet.quota_id=quota.id WHERE betslip.id=$1 AND user_email=$2 AND betslip.type='single' AND betslip_bet.status='win' GROUP BY betslip.id, betslip.user_email"
   },
   user: {
-    get_bets: "SELECT betslip_id, betslip_bet.stake as quota_stake, quota.type as quota_type, quota.value as quota_value, betslip_bet.status as bet_status, betslip.stake as total_stake, betslip.type as betslip_type, betslip.status as betslip_status, host.name as host_name, guest.name as guest_name, start_time FROM betslip_bet JOIN betslip ON betslip_bet.betslip_id=betslip.id JOIN quota ON betslip_bet.quota_id=quota.id JOIN event ON quota.event_id=event.id JOIN team AS host ON event.host_id=host.id JOIN team AS guest ON event.guest_id=guest.id WHERE betslip.user_email=$1"
+    get_bets: "SELECT betslip_id, betslip_bet.stake as quota_stake, quota.type as quota_type, quota.value as quota_value, betslip_bet.status as bet_status, betslip.stake as total_stake, betslip.type as betslip_type, betslip.status as betslip_status, host.name as host_name, guest.name as guest_name, CONCAT(player_host.name, ' ', player_host.surname) as host_player, CONCAT(player_guest.name, ' ', player_guest.surname) as guest_player, start_time, competition.type as competition_type FROM betslip_bet JOIN betslip ON betslip_bet.betslip_id=betslip.id JOIN quota ON betslip_bet.quota_id=quota.id JOIN event ON quota.event_id=event.id LEFT JOIN team AS host ON event.host_id=host.id LEFT JOIN team AS guest ON event.guest_id=guest.id LEFT JOIN player as player_host ON event.host_id=player_host.id LEFT JOIN player as player_guest ON event.guest_id=player_guest.id LEFT JOIN competition ON event.competition_id=competition.id WHERE betslip.user_email=$1"
   }
 }
 

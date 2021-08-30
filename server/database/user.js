@@ -132,7 +132,7 @@ var deposit = (req, res) => {
 }
 
 // function to place bet (function proccess the request and redirect to another function based on bet type)
-var placeBet = (req, res, next) => {
+var placeBet = (req, res) => {
   const { body: { query: { type, quotas, stake } }, payload: { email } } = req;
   var promises = []; // variable to store promises for each bet
 
@@ -144,19 +144,20 @@ var placeBet = (req, res, next) => {
         betslip.createBetslipBet(betslip_id, quota).catch(() => res.status(422).json({ error: error.invalid_bet })) // if error on placing bet, reject whole operation
       );
     // after all bets are created (fulfill promises), return success
-    Promise.all(promises).then(() => next());
+    Promise.all(promises).then(() => res.status(201).json({ msg: successMsg.placeBet }));
   })
 }
 
 // function to take user money after placing bet
-var takeMoneyFromUser = (req, res) => {
+var takeMoneyFromUser = (req, res, next) => {
   const { user: { saldo }, payload: { email }, body: { query: { stake } } } = req;
   // calculate new user balance
   var newBalance = parseFloat(saldo) - parseFloat(stake);
+  if (newBalance < 0) return res.status(422).json({ error: error.insufficient_founds })
   // update user saldo in db
   pool.query('UPDATE public."user" SET saldo=$1 WHERE email=$2', [newBalance, email], (err, resp) => {
     if (err) throw err;
-    res.status(201).json({ msg: successMsg.placeBet })
+    next();
   })
 }
 

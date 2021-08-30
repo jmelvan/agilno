@@ -11,8 +11,8 @@ class BetslipBet extends React.Component {
       stake: '',
       win: '',
       result_text: {
-        '1': props.bet.event.host,
-        '2': props.bet.event.guest,
+        '1': (props.bet.event.competition_type == 'individual' ? props.bet.event.host_player : props.bet.event.host),
+        '2': (props.bet.event.competition_type == 'individual' ? props.bet.event.guest_player : props.bet.event.guest),
         'x': 'Draw'
       }
     }
@@ -61,7 +61,13 @@ class BetslipBet extends React.Component {
     return(
       <div className="betslip__bet">
         <div className="bet__header">
-          <div className="bet__opponents">{ bet.event.host } &nbsp;&ndash;&nbsp; { bet.event.guest }</div>
+          <div className="bet__opponents">
+            { 
+              bet.event.competition_type == 'individual' ? bet.event.host_player : bet.event.host 
+            } &nbsp;&ndash;&nbsp; { 
+              bet.event.competition_type == 'individual' ? bet.event.guest_player : bet.event.guest 
+            }
+          </div>
           <div className="bet__remove hover--opacity" onClick={() => removeBet(bet.event.event_id)}></div>
         </div>
         <div className="bet__header">

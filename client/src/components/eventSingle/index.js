@@ -20,7 +20,15 @@ class EventSingle extends React.Component {
     return(
       <div className="event">
         <div className="event__info">
-          <h5 className="event__info__h5">{ event.host } &nbsp;&ndash;&nbsp; { event.guest }</h5>
+          <h5 className="event__info__h5">
+            { 
+              event.competition_type == 'individual' ? 
+                event.host_player : event.host 
+            } &nbsp;&ndash;&nbsp; {
+              event.competition_type == 'individual' ? 
+                event.guest_player : event.guest 
+            }
+          </h5>
           <h6 className="event_info__h6">{ this.getTime() }</h6>
         </div>
         <div className="event__quotas">

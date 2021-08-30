@@ -13,7 +13,7 @@ var get = (req, res) => {
 var checkUnique = (req, res, next) => {
   const { body: { query: { name } } } = req;
 
-  pool.query('SELECT count(*) FROM sport WHERE name=$1', [name], (err, result) => {
+  pool.query('SELECT * FROM sport WHERE name=$1', [name], (err, result) => {
     if (err) throw err;
     if (result.rowCount) return res.status(422).json({ error: error.sport_exists }); // if rowCount > 0, sport exists and return error for creation
     next();
@@ -24,7 +24,7 @@ var checkUnique = (req, res, next) => {
 var add = (req, res) => {
   const { body: { query: { name, type, result } } } = req;
 
-  pool.query('INSERT INTO sport(name, type, result) VALUES ($1, $2, $3)', [name, type, result], (error, result) => {
+  pool.query('INSERT INTO sport(name, type, result) VALUES ($1, $2, $3)', [name, type, JSON.stringify(result)], (error, result) => {
     if (error) throw error;
     res.sendStatus(201);
   })

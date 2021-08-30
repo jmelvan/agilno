@@ -11,7 +11,7 @@ class EventSingle extends React.Component {
 
     let h = new Date(parseInt(event.start_time)).getHours();
     let m = new Date(parseInt(event.start_time)).getMinutes();
-    return h + ':' + m + ' h';
+    return (h<10?'0':'') + h + ':' + (m<10?'0':'') + m + ' h';
   }
 
   render() {

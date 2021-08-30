@@ -29,7 +29,7 @@ class AdminCompetitions extends React.Component {
       dd = date.getDate(),
       mm = date.getMonth()+1,
       yy = date.getFullYear()
-    return dd + '.' + mm + '.' + yy + ' ' + h + ':' + m + ' h';
+    return dd + '.' + mm + '.' + yy + ' ' + (h<10?'0':'') + h + ':' + (m<10?'0':'') + m + ' h';
   }
 
   startClosing() {

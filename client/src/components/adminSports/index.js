@@ -41,7 +41,7 @@ class AdminSports extends React.Component {
     if(name == '') return;
 
     var results = {
-      1: ["1", "2", "x"],
+      1: ["1", "x", "2"],
       2: ["1", "2"]
     }
     var type = {

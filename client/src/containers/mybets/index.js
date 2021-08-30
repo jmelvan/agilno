@@ -24,7 +24,9 @@ class MyBets extends React.Component {
         <section className="content-holder container maxw">
           <div className="grid">
             {
-              betslips && Object.keys(betslips).map((betslip, i) => <MyBetslip key={i} betslip={betslips[betslip]} betslip_id={betslip} /> )
+              betslips && Object.keys(betslips).length ?
+                Object.keys(betslips).map((betslip, i) => <MyBetslip key={i} betslip={betslips[betslip]} betslip_id={betslip} /> )
+              : <div className="sports__empty" style={{"grid-column": "span 12"}}>You havn't placed any bet jet.</div>
             }
           </div>
         </section>

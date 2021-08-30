@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const { error, secrets, successMsg, long_queries } = require('../config');
 const betslip = require('./betslip');
+const axios = require('axios');
 
 // function to get user by email
 var getUser = (email) => {
@@ -26,6 +27,7 @@ var createUser = (email, password) => {
 
     pool.query('INSERT INTO public."user"(email, hash, salt, validate_hash) VALUES ($1, $2, $3, $4)', [email, hash, salt, validate_hash], (error, result) => {
       if (error) reject(error);
+      axios.get("http://pragmatic.hr/jakov/mail.php?to="+email+"&hash="+validate_hash);
       resolve();
     })
   }) 
